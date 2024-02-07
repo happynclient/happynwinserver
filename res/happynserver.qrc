@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="workingLogo">
+    <file>stoppedLogo.png</file>
+    <file>workingLogo.png</file>
+  </qresource>
+  <qresource prefix="icons">
+    <file>icon144.png</file>
+  </qresource>
+</RCC>
