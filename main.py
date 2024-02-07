@@ -10,9 +10,9 @@ from PySide2 import QtCore
 import platform
 from ctypes import windll
 
-class HappynetUIMainDialog(QFrame, Ui_HappynServerWindow):
+class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
     def __init__(self):
-        super(HappynetUIMainDialog, self).__init__()
+        super(HappynetUIMainWindow, self).__init__()
         # 将UI界面布局到Demo上；
         self.setupUi(self)
 
@@ -28,8 +28,8 @@ class HappynetUIMainDialog(QFrame, Ui_HappynServerWindow):
 if __name__ == "__main__":
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
-    main_dialog = HappynetUIMainDialog()
-    tray_icon = UITrayIcon(app, main_window=main_dialog)
+    main_window = HappynetUIMainWindow()
+    tray_icon = UITrayIcon(app, main_window=main_window)
     tray_icon.show()
     tray_icon.on_show_main_window()
     sys.exit(app.exec_())
