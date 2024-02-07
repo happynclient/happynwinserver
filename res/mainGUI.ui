@@ -40,9 +40,6 @@
     <normaloff>:/icons/icon144.png</normaloff>
     <normalon>:/icons/icon144.png</normalon>:/icons/icon144.png</iconset>
   </property>
-  <property name="dockOptions">
-   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
@@ -63,7 +60,7 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>设置</string>
+        <string>网络设置</string>
        </property>
        <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
@@ -144,11 +141,11 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayoutLogging">
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QGroupBox" name="groupBoxLogging">
        <property name="title">
         <string>日志</string>
        </property>
-       <widget class="QPlainTextEdit" name="plainTextEdit">
+       <widget class="QPlainTextEdit" name="plainTextEditLogging">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -179,11 +176,11 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayoutSystemSetting">
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="groupBoxSystem">
        <property name="title">
         <string>服务控制</string>
        </property>
-       <widget class="QCommandLinkButton" name="commandLinkButton">
+       <widget class="QCommandLinkButton" name="commandLinkButtonStart">
         <property name="geometry">
          <rect>
           <x>270</x>
@@ -196,7 +193,7 @@
          <string>启动</string>
         </property>
        </widget>
-       <widget class="QCommandLinkButton" name="commandLinkButton_2">
+       <widget class="QCommandLinkButton" name="commandLinkButtonMonitor">
         <property name="geometry">
          <rect>
           <x>270</x>
@@ -209,7 +206,7 @@
          <string>查看在线设备</string>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="checkBoxAutoStart">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -222,7 +219,7 @@
          <string>开机自启动</string>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_2">
+       <widget class="QCheckBox" name="checkBoxTray">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -243,7 +240,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>730</y>
+      <y>746</y>
       <width>161</width>
       <height>21</height>
      </rect>
@@ -256,7 +253,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>730</y>
+      <y>746</y>
       <width>191</width>
       <height>20</height>
      </rect>
@@ -269,9 +266,9 @@
     <property name="geometry">
      <rect>
       <x>460</x>
-      <y>730</y>
+      <y>739</y>
       <width>93</width>
-      <height>28</height>
+      <height>30</height>
      </rect>
     </property>
     <property name="text">
@@ -279,18 +276,17 @@
     </property>
    </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <tabstops>
   <tabstop>lineServerPort</tabstop>
   <tabstop>lineEditServerID</tabstop>
   <tabstop>lineEditServerSubnet</tabstop>
   <tabstop>lineEditCustomParam</tabstop>
-  <tabstop>checkBox</tabstop>
-  <tabstop>checkBox_2</tabstop>
-  <tabstop>commandLinkButton</tabstop>
-  <tabstop>commandLinkButton_2</tabstop>
-  <tabstop>plainTextEdit</tabstop>
+  <tabstop>checkBoxAutoStart</tabstop>
+  <tabstop>checkBoxTray</tabstop>
+  <tabstop>commandLinkButtonStart</tabstop>
+  <tabstop>commandLinkButtonMonitor</tabstop>
+  <tabstop>plainTextEditLogging</tabstop>
  </tabstops>
  <resources>
   <include location="happynserver.qrc"/>
