@@ -1,11 +1,8 @@
 import sys
 
-from view.ui_trayicon import UITrayIcon
-from view.ui_main_window import Ui_HappynServerWindow
-from PySide2.QtWidgets import QApplication, QMainWindow, QLabel,\
-    QVBoxLayout, QWidget, QHBoxLayout, QPushButton, \
-    QComboBox, QCheckBox, QFrame, QStyle
-from PySide2.QtGui import QPixmap, QFont, QIcon
+from happynserver.view.ui_trayicon import UITrayIcon
+from happynserver.view.ui_main_window import Ui_HappynServerWindow
+from PySide2.QtWidgets import QApplication, QFrame
 from PySide2 import QtCore
 import platform
 from ctypes import windll

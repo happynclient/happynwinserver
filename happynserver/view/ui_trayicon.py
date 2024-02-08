@@ -1,14 +1,17 @@
-import sys
-from PySide2.QtWidgets import QApplication, QMenu, QAction, QSystemTrayIcon
-from PySide2.QtGui import QIcon, QPixmap
+from PySide2.QtWidgets import QMenu, QAction, QSystemTrayIcon
+from PySide2.QtGui import QIcon
+
+from happynserver.model.config import HPYNConfigManager
 
 
 class UITrayIcon(QSystemTrayIcon):
     def __init__(self, parent=None, main_window=None):
         super().__init__(parent)
+        system_config = HPYNConfigManager()
 
         # 获取初始配置项
-        self.is_tray = True
+        # self.is_tray = system_config.get_config_parameter(0, "tray")
+        self.is_tray = False
         self.is_started = False
         self.main_window = main_window
         self.main_window.windowIconChanged.connect(self.update_tray_icon)

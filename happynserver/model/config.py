@@ -17,34 +17,34 @@ class HPYNConfigManager(object):
         else:  # Linux and other Unix-like OS
             return home / ".happynet" / "config.yaml"
 
-    def load_hpyn_config(self):
+    def load_config(self):
         if self.config_path.exists():
             with open(self.config_path, 'r') as file:
                 self.configs = yaml.safe_load(file) or []
 
-    def get_hpyn_configs(self):
+    def get_configs(self):
         return self.configs
 
-    def get_hpyn_config(self, index):
+    def get_config(self, index):
         return self.configs[index] if index < len(self.configs) else None
 
-    def add_hpyn_config(self, config):
+    def add_config(self, config):
         self.configs.append(config)
 
-    def remove_hpyn_config(self, index):
+    def remove_config(self, index):
         if index < len(self.configs):
             self.configs.pop(index)
 
-    def get_hpyn_config_parameter(self, index, param_name):
-        config = self.get_hpyn_config(index)
+    def get_config_parameter(self, index, param_name):
+        config = self.get_config(index)
         if config is not None:
             return config.get(param_name)
         return None
 
-    def get_all_hpyn_config_parameters(self, index):
-        config = self.get_hpyn_config(index)
+    def get_all_config_parameters(self, index):
+        config = self.get_config(index)
         return config if config is not None else {}
 
-    def save_hpyn_config(self):
+    def save_config(self):
         with open(self.config_path, 'w') as file:
             yaml.dump(self.configs, file)
