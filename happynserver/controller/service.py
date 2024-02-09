@@ -1,18 +1,24 @@
 """
 # 示例用法
-service_manager = ServiceManager("MyService", "python my_service.py --port {port} --id {service_id}")
-service_manager.create_service({"port": 8080, "service_id": "service123"})
-# service_manager.start_service()
-# logs = service_manager.get_logs()
-# print(logs)
-# service_manager.stop_service()
-# service_manager.delete_service()
+# 无论调用多少次ServiceManager，返回的都是同一个实例
+service_manager1 = ServiceManager("MyService", "python my_service.py --port {port} --id {service_id}")
+service_manager2 = ServiceManager("MyService", "python my_service.py --port {port} --id {service_id}")
+assert service_manager1 is service_manager2  # 这将证明service_manager1和service_manager2是同一个实例
 """
 import subprocess
 import os
 
 
-class ServiceManager(object):
+class SingletonMeta(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(SingletonMeta, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class ServiceManager(metaclass=SingletonMeta):
     def __init__(self, service_name, command_template):
         self.service_name = service_name
         self.command_template = command_template
