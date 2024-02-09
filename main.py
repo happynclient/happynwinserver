@@ -2,7 +2,7 @@ import sys
 
 from happynserver.view.ui_trayicon import UITrayIcon
 from happynserver.view.ui_main_window import Ui_HappynServerWindow
-from PySide2.QtWidgets import QApplication, QFrame
+from PySide2.QtWidgets import QApplication, QFrame, QMessageBox
 from PySide2.QtCore import QEvent
 from PySide2 import QtCore
 import platform
@@ -19,6 +19,9 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         self.tray_icon = UITrayIcon(self)
         # self.tray_icon.show()
 
+        # 连接按钮的clicked信号到窗口的close方法
+        self.pushButtonExit.clicked.connect(self.close)
+
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
             if self.isMinimized():
@@ -26,6 +29,16 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
                 self.tray_icon.show()  # 显示托盘图标
             else:
                 super().changeEvent(event)  # 处理其他状态变化
+
+    def closeEvent(self, event):
+        # 弹出确认对话框
+        reply = QMessageBox.question(self, '确认退出', '关闭窗口会退出当前服务，确定退出吗？',
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            event.accept()  # 用户确认退出
+        else:
+            event.ignore()  # 用户取消退出，忽略关闭事件
 
 
 if __name__ == "__main__":
