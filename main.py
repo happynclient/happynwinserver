@@ -2,6 +2,7 @@ import sys
 
 from happynserver.view.ui_trayicon import UITrayIcon
 from happynserver.view.ui_main_window import Ui_HappynServerWindow
+from happynserver.model.config import HPYConfigManager
 from PySide2.QtWidgets import QApplication, QFrame, QMessageBox
 from PySide2.QtCore import QEvent
 from PySide2 import QtCore
@@ -21,6 +22,26 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
 
         # 连接按钮的clicked信号到窗口的close方法
         self.pushButtonExit.clicked.connect(self.close)
+
+    def setupUi(self, HappynServerWindow):
+        # 首先调用基类的setupUi来继承原有的UI设置
+        super().setupUi(HappynServerWindow)
+        config_manager = HPYConfigManager()
+
+        # 设置默认配置
+        default_config = {
+            "ServerPort": 7644,
+            "ServerID": "happyn001",
+            "ServerSubnet": "192.168.100.0/24",
+            "CustomParam": "",
+            "IsAutoStart": 1,
+            "IsMinToTray": 1
+        }
+        # 使用默认配置初始化或更新注册表
+        config_manager.update(default_config)
+
+        self.lineServerPort.setText(str(default_config['ServerPort']))
+
 
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
