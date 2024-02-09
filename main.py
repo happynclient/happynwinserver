@@ -16,6 +16,8 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         # 将UI界面布局到Demo上；
         self.setupUi(self)
 
+        self.config = {}
+
         # 创建托盘图标实例
         self.tray_icon = UITrayIcon(self)
         # self.tray_icon.show()
@@ -23,25 +25,33 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         # 连接按钮的clicked信号到窗口的close方法
         self.pushButtonExit.clicked.connect(self.close)
 
+
     def setupUi(self, HappynServerWindow):
         # 首先调用基类的setupUi来继承原有的UI设置
         super().setupUi(HappynServerWindow)
         config_manager = HPYConfigManager()
 
         # 设置默认配置
-        default_config = {
-            "ServerPort": 7644,
-            "ServerID": "happyn001",
-            "ServerSubnet": "192.168.100.0/24",
-            "CustomParam": "",
-            "IsAutoStart": 1,
-            "IsMinToTray": 1
-        }
-        # 使用默认配置初始化或更新注册表
-        config_manager.update(default_config)
+        self.config = config_manager.load_config()
+        if not self.config:
+            # 使用默认配置初始化或更新注册表
+            config = {
+                "ServerPort": 7644,
+                "ServerID": "happyn001",
+                "ServerSubnet": "192.168.100.0/24",
+                "CustomParam": "",
+                "IsAutoStart": 1,
+                "IsMinToTray": 1
+            }
+            config_manager.update(config)
+        self.load_gui_from_config()
 
-        self.lineServerPort.setText(str(default_config['ServerPort']))
+    def save_gui_to_config(self):
+        pass
 
+    def load_gui_from_config(self):
+        self.lineServerPort.setText(str(self.config['ServerPort']))
+        pass
 
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
