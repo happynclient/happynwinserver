@@ -17,10 +17,9 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
     def __init__(self):
         super(HappynetUIMainWindow, self).__init__()
 
-        self.config = {}
+        self.working_dir = self.get_current_working_directory()
         self.config_manager = HPYConfigManager()
-        self.service_manager = ServiceManager("MyService",
-                                              "python my_service.py --port {port} --id {service_id}")
+        self.service_manager = ServiceManager("HappynServer")
 
         # 将UI界面布局到Demo上；
         self.setupUi(self)
@@ -38,10 +37,9 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         super().setupUi(HappynServerWindow)
 
         # 设置默认配置
-        self.config = self.config_manager.load_config()
-        if not self.config:
+        if not self.config_manager.load_config():
             # 使用默认配置初始化或更新注册表
-            config = {
+            default_config = {
                 "ServerPort": 7644,
                 "ServerID": "happyn001",
                 "ServerSubnet": "192.168.100.0/24",
@@ -49,7 +47,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
                 "IsAutoStart": 1,
                 "IsMinToTray": 1
             }
-            self.config_manager.update(config)
+            self.config_manager.update(default_config)
         self.load_gui_from_config()
 
         self.commandLinkButtonMonitor.setEnabled(False)  # 初始状态设置为不可点击
@@ -71,7 +69,8 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
 
     def start_service(self):
         if self.save_gui_to_config():
-            # service_manager.start_service()  # 假设这是启动服务的方法
+            command_line = self.config_manager.generate_command_line(self.working_dir)
+            self.service_manager.upsert_service(command_line)  # 假设这是启动服务的方法
             self.service_manager.start_service()
             self.commandLinkButtonStart.setText("停止")
             self.commandLinkButtonMonitor.setEnabled(True)
@@ -90,7 +89,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         try:
             port = int(self.lineServerPort.text())
             if 1 <= port <= 65535:
-                self.config['ServerPort'] = port
+                self.config_manager.set('ServerPort', port)
             else:
                 raise ValueError
         except ValueError:
@@ -109,7 +108,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             mask = int(parts[1])
 
             if all(0 <= int(part) <= 255 for part in ip_parts) and 0 <= mask <= 32:
-                self.config['ServerSubnet'] = self.lineEditServerSubnet.text()
+                self.config_manager.set('ServerSubnet', self.lineEditServerSubnet.text())
             else:
                 QMessageBox.warning(self, "无效子网格式", "子网格式不正确，请输入正确的子网，如192.168.100.0/24。",
                                     QMessageBox.Ok)
@@ -121,22 +120,21 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             self.lineEditServerSubnet.setFocus()
             return False
 
-        self.config['ServerID'] = self.lineEditServerID.text()
-        self.config['CustomParam'] = self.lineEditCustomParam.text()
+        self.config_manager.set('ServerID', self.lineEditServerID.text())
+        self.config_manager.set('CustomParam', self.lineEditCustomParam.text())
 
-        self.config['IsMinToTray'] = self.checkBoxTray.isChecked()
-        self.config['IsAutoStart'] = self.checkBoxAutoStart.isChecked()
-        self.config_manager.update(self.config)
+        self.config_manager.set('IsMinToTray', self.checkBoxTray.isChecked())
+        self.config_manager.set('IsAutoStart', self.checkBoxAutoStart.isChecked())
         return True
 
     def load_gui_from_config(self):
-        self.lineServerPort.setText(str(self.config['ServerPort']))
-        self.lineEditServerID.setText(self.config['ServerID'])
-        self.lineEditServerSubnet.setText(self.config['ServerSubnet'])
-        self.lineEditCustomParam.setText(self.config['CustomParam'])
+        self.lineServerPort.setText(str(self.config_manager.get('ServerPort')))
+        self.lineEditServerID.setText(self.config_manager.get('ServerID'))
+        self.lineEditServerSubnet.setText(self.config_manager.get('ServerSubnet'))
+        self.lineEditCustomParam.setText(self.config_manager.get('CustomParam'))
 
-        self.checkBoxTray.setChecked(self.config['IsMinToTray'])
-        self.checkBoxAutoStart.setChecked(self.config['IsAutoStart'])
+        self.checkBoxTray.setChecked(self.config_manager.get('IsMinToTray'))
+        self.checkBoxAutoStart.setChecked(self.config_manager.get('IsAutoStart'))
 
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:

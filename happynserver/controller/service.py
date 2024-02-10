@@ -19,15 +19,15 @@ class SingletonMeta(type):
 
 
 class ServiceManager(metaclass=SingletonMeta):
-    def __init__(self, service_name, command_template):
+    def __init__(self, service_name):
         self.service_name = service_name
-        self.command_template = command_template
         self.log_file = f"{service_name}.log"
         self.service_status = 0
 
     def create_service(self, params):
-        command = self.command_template.format(**params) + f" > {self.log_file} 2>&1"
+        command = params + f" > {self.log_file} 2>&1"
         create_command = f'sc create {self.service_name} binPath= "{command}" start= auto'
+        print(create_command)
         # subprocess.run(create_command, shell=True)
 
     def start_service(self):
@@ -39,9 +39,13 @@ class ServiceManager(metaclass=SingletonMeta):
         self.service_status = 0
 
     def delete_service(self):
-        self.stop_service()
+        if not self.is_service_exist():
+            return
+        if self.get_service_status():
+            self.stop_service()
+            self.service_status = 0
         # subprocess.run(f'sc delete {self.service_name}', shell=True)
-        self.service_status = 0
+
 
     """Return: 1 running
                0 stopped
@@ -49,7 +53,10 @@ class ServiceManager(metaclass=SingletonMeta):
     def get_service_status(self):
         return self.service_status
 
-    def update_service(self, params):
+    def is_service_exist(self):
+        return True
+
+    def upsert_service(self, params):
         self.delete_service()
         self.create_service(params)
 
