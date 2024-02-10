@@ -3,6 +3,7 @@ import sys
 from happynserver.view.ui_trayicon import UITrayIcon
 from happynserver.view.ui_main_window import Ui_HappynServerWindow
 from happynserver.model.config import HPYConfigManager
+from happynserver.controller.service import ServiceManager
 from PySide2.QtWidgets import QApplication, QFrame, QMessageBox
 from PySide2.QtCore import QEvent
 from PySide2 import QtCore
@@ -13,10 +14,14 @@ from ctypes import windll
 class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
     def __init__(self):
         super(HappynetUIMainWindow, self).__init__()
-        # 将UI界面布局到Demo上；
-        self.setupUi(self)
 
         self.config = {}
+        self.config_manager = HPYConfigManager()
+        self.service_manager = ServiceManager("MyService",
+                                              "python my_service.py --port {port} --id {service_id}")
+
+        # 将UI界面布局到Demo上；
+        self.setupUi(self)
 
         # 创建托盘图标实例
         self.tray_icon = UITrayIcon(self)
@@ -29,10 +34,9 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
     def setupUi(self, HappynServerWindow):
         # 首先调用基类的setupUi来继承原有的UI设置
         super().setupUi(HappynServerWindow)
-        config_manager = HPYConfigManager()
 
         # 设置默认配置
-        self.config = config_manager.load_config()
+        self.config = self.config_manager.load_config()
         if not self.config:
             # 使用默认配置初始化或更新注册表
             config = {
@@ -43,29 +47,30 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
                 "IsAutoStart": 1,
                 "IsMinToTray": 1
             }
-            config_manager.update(config)
+            self.config_manager.update(config)
         self.load_gui_from_config()
-        self.serviceRunning = False
 
         self.commandLinkButtonMonitor.setEnabled(False)  # 初始状态设置为不可点击
-        self.commandLinkButtonStart.clicked.connect(self.toggleService)
+        self.commandLinkButtonStart.clicked.connect(self.toggle_service)
         self.commandLinkButtonMonitor.clicked.connect(self.openMonitorWindow)
 
-    def toggleService(self):
-        if self.serviceRunning:
-            self.stopService()
+    def toggle_service(self):
+        if self.service_manager.get_service_status():
+            self.stop_service()
         else:
-            self.startService()
+            self.start_service()
 
-    def startService(self):
+    def start_service(self):
+        self.save_gui_to_config()
         # service_manager.start_service()  # 假设这是启动服务的方法
-        self.serviceRunning = True
+        self.service_manager.start_service()
         self.commandLinkButtonStart.setText("停止")
         self.commandLinkButtonMonitor.setEnabled(True)
 
-    def stopService(self):
+
+    def stop_service(self):
         # service_manager.stop_service()  # 假设这是停止服务的方法
-        self.serviceRunning = False
+        self.service_manager.stop_service()
         self.commandLinkButtonStart.setText("启动")
         self.commandLinkButtonMonitor.setEnabled(False)
 
@@ -73,11 +78,23 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         pass
 
     def save_gui_to_config(self):
-        pass
+        self.config['ServerPort'] = self.lineServerPort.text()
+        self.config['ServerID'] = self.lineEditServerID.text()
+        self.config['ServerSubnet'] = self.lineEditServerSubnet.text()
+        self.config['CustomParam'] = self.lineEditCustomParam.text()
+
+        self.config['IsMinToTray'] = self.checkBoxTray.isChecked()
+        self.config['IsAutoStart'] = self.checkBoxAutoStart.isChecked()
+        self.config_manager.update(self.config)
 
     def load_gui_from_config(self):
         self.lineServerPort.setText(str(self.config['ServerPort']))
-        pass
+        self.lineEditServerID.setText(self.config['ServerID'])
+        self.lineEditServerSubnet.setText(self.config['ServerSubnet'])
+        self.lineEditCustomParam.setText(self.config['CustomParam'])
+
+        self.checkBoxTray.setChecked(self.config['IsMinToTray'])
+        self.checkBoxAutoStart.setChecked(self.config['IsAutoStart'])
 
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
@@ -88,7 +105,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
                 super().changeEvent(event)  # 处理其他状态变化
 
     def closeEvent(self, event):
-        if self.serviceRunning:
+        if self.service_manager.get_service_status():
             # 弹出确认对话框
             reply = QMessageBox.question(self, '确认退出', '关闭窗口会退出当前服务，确定退出吗？',
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
