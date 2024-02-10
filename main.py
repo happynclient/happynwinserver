@@ -1,3 +1,4 @@
+import re
 import sys
 
 from happynserver.view.ui_trayicon import UITrayIcon
@@ -61,11 +62,11 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             self.start_service()
 
     def start_service(self):
-        self.save_gui_to_config()
-        # service_manager.start_service()  # 假设这是启动服务的方法
-        self.service_manager.start_service()
-        self.commandLinkButtonStart.setText("停止")
-        self.commandLinkButtonMonitor.setEnabled(True)
+        if self.save_gui_to_config():
+            # service_manager.start_service()  # 假设这是启动服务的方法
+            self.service_manager.start_service()
+            self.commandLinkButtonStart.setText("停止")
+            self.commandLinkButtonMonitor.setEnabled(True)
 
 
     def stop_service(self):
@@ -78,14 +79,47 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         pass
 
     def save_gui_to_config(self):
-        self.config['ServerPort'] = self.lineServerPort.text()
+        try:
+            port = int(self.lineServerPort.text())
+            if 1 <= port <= 65535:
+                self.config['ServerPort'] = port
+            else:
+                raise ValueError
+        except ValueError:
+            QMessageBox.warning(self, "无效端口", "端口号必须是1到65535之间的整数。", QMessageBox.Ok)
+            self.lineServerPort.setFocus()
+            return False
+
+
+        # 正则表达式用于匹配IPv4地址/掩码格式
+        subnet_pattern = re.compile(r'^(\d{1,3}\.){3}\d{1,3}\/\d{1,2}$')
+        match = subnet_pattern.match(self.lineEditServerSubnet.text())
+
+        if match:
+            parts = self.lineEditServerSubnet.text().split('/')
+            ip_parts = parts[0].split('.')
+            mask = int(parts[1])
+
+            if all(0 <= int(part) <= 255 for part in ip_parts) and 0 <= mask <= 32:
+                self.config['ServerSubnet'] = self.lineEditServerSubnet.text()
+            else:
+                QMessageBox.warning(self, "无效子网格式", "子网格式不正确，请输入正确的子网，如192.168.100.0/24。",
+                                    QMessageBox.Ok)
+                self.lineEditServerSubnet.setFocus()
+                return False
+        else:
+            QMessageBox.warning(self, "无效子网格式", "子网格式不正确，请输入正确的子网，如192.168.100.0/24。",
+                                QMessageBox.Ok)
+            self.lineEditServerSubnet.setFocus()
+            return False
+
         self.config['ServerID'] = self.lineEditServerID.text()
-        self.config['ServerSubnet'] = self.lineEditServerSubnet.text()
         self.config['CustomParam'] = self.lineEditCustomParam.text()
 
         self.config['IsMinToTray'] = self.checkBoxTray.isChecked()
         self.config['IsAutoStart'] = self.checkBoxAutoStart.isChecked()
         self.config_manager.update(self.config)
+        return True
 
     def load_gui_from_config(self):
         self.lineServerPort.setText(str(self.config['ServerPort']))
