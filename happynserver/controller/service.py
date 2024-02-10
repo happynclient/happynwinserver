@@ -23,20 +23,31 @@ class ServiceManager(metaclass=SingletonMeta):
         self.service_name = service_name
         self.command_template = command_template
         self.log_file = f"{service_name}.log"
+        self.service_status = 0
 
     def create_service(self, params):
         command = self.command_template.format(**params) + f" > {self.log_file} 2>&1"
         create_command = f'sc create {self.service_name} binPath= "{command}" start= auto'
-        subprocess.run(create_command, shell=True)
+        # subprocess.run(create_command, shell=True)
 
     def start_service(self):
-        subprocess.run(f'sc start {self.service_name}', shell=True)
+        # subprocess.run(f'sc start {self.service_name}', shell=True)
+        self.service_status = 1
 
     def stop_service(self):
-        subprocess.run(f'sc stop {self.service_name}', shell=True)
+        # subprocess.run(f'sc stop {self.service_name}', shell=True)
+        self.service_status = 0
 
     def delete_service(self):
-        subprocess.run(f'sc delete {self.service_name}', shell=True)
+        self.stop_service()
+        # subprocess.run(f'sc delete {self.service_name}', shell=True)
+        self.service_status = 0
+
+    """Return: 1 running
+               0 stopped
+    """
+    def get_service_status(self):
+        return self.service_status
 
     def update_service(self, params):
         self.delete_service()
