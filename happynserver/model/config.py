@@ -4,14 +4,13 @@ config_manager = HPYConfigManager()
 
 # 设置默认配置
 default_config = {
-    "服务器端口": 8080,
-    "服务ID": "DefaultServiceID",
-    "服务子网": "255.255.255.0",
-    "自定义参数": "DefaultValue",
-    "是否开机自启动": 1,
-    "是否最小化到托盘": 1
+    "ServerPort": 7644,
+    "ServerID": "happyn001",
+    "ServerSubnet": "192.168.100.0/24",
+    "CustomParam": "-v -M  -c /var/supernode/community.list -f",
+    "IsAutoStart": 1,
+    "IsMinToTray": 1
 }
-
 # 使用默认配置初始化或更新注册表
 config_manager.update(default_config)
 
@@ -24,7 +23,7 @@ config_manager.set("服务器端口", 9090)
 # 删除配置项
 config_manager.delete("自定义参数")
 """
-
+import os
 import winreg as reg
 
 class HPYConfigManager:
@@ -78,3 +77,18 @@ class HPYConfigManager:
         self.config.update(updates)
         self.save_config()
 
+    def generate_command_line(self, working_dir):
+        # 基础命令行前缀
+        command_base = os.path.join(working_dir, "happynsupernode")
+
+        # 服务器端口参数
+        port_param = f"-p {self.config.get('ServerPort', '')}"
+
+        # 自定义参数，假设这部分不需要键名，直接使用值
+        custom_param = self.config.get('CustomParam', '')
+
+        # 组合所有部分
+        command_line = f"{command_base} {port_param} {custom_param}"
+
+        # 返回生成的命令行字符串
+        return command_line

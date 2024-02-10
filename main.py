@@ -1,4 +1,5 @@
 import re
+import os
 import sys
 
 from happynserver.view.ui_trayicon import UITrayIcon
@@ -54,6 +55,13 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         self.commandLinkButtonMonitor.setEnabled(False)  # 初始状态设置为不可点击
         self.commandLinkButtonStart.clicked.connect(self.toggle_service)
         self.commandLinkButtonMonitor.clicked.connect(self.openMonitorWindow)
+
+    def get_current_working_directory(self):
+        # 获取当前文件的绝对路径
+        abs_file_path = os.path.abspath(__file__)
+        # 获取当前文件所在的目录
+        directory = os.path.dirname(abs_file_path)
+        return directory
 
     def toggle_service(self):
         if self.service_manager.get_service_status():
