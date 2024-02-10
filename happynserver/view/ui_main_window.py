@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainGUIwrLLXo.ui'
+## Form generated from reading UI file 'mainGUINyvyOs.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.2
 ##
@@ -46,52 +46,27 @@ class Ui_HappynServerWindow(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.groupBoxSetting.sizePolicy().hasHeightForWidth())
         self.groupBoxSetting.setSizePolicy(sizePolicy1)
-        self.layoutWidget = QWidget(self.groupBoxSetting)
-        self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(10, 30, 561, 88))
-        self.gridLayout = QGridLayout(self.layoutWidget)
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.labelServerPort = QLabel(self.layoutWidget)
-        self.labelServerPort.setObjectName(u"labelServerPort")
-
-        self.gridLayout.addWidget(self.labelServerPort, 0, 0, 1, 1)
-
-        self.lineServerPort = QLineEdit(self.layoutWidget)
-        self.lineServerPort.setObjectName(u"lineServerPort")
-
-        self.gridLayout.addWidget(self.lineServerPort, 0, 1, 1, 1)
-
-        self.labelServerID = QLabel(self.layoutWidget)
-        self.labelServerID.setObjectName(u"labelServerID")
-
-        self.gridLayout.addWidget(self.labelServerID, 1, 0, 1, 1)
-
-        self.lineEditServerID = QLineEdit(self.layoutWidget)
-        self.lineEditServerID.setObjectName(u"lineEditServerID")
-
-        self.gridLayout.addWidget(self.lineEditServerID, 1, 1, 1, 1)
-
-        self.labelServerSubNet = QLabel(self.layoutWidget)
-        self.labelServerSubNet.setObjectName(u"labelServerSubNet")
-
-        self.gridLayout.addWidget(self.labelServerSubNet, 1, 2, 1, 1)
-
-        self.lineEditServerSubnet = QLineEdit(self.layoutWidget)
-        self.lineEditServerSubnet.setObjectName(u"lineEditServerSubnet")
-
-        self.gridLayout.addWidget(self.lineEditServerSubnet, 1, 3, 1, 1)
-
-        self.labelCustomParam = QLabel(self.layoutWidget)
+        self.labelCustomParam = QLabel(self.groupBoxSetting)
         self.labelCustomParam.setObjectName(u"labelCustomParam")
-
-        self.gridLayout.addWidget(self.labelCustomParam, 2, 0, 1, 1)
-
-        self.lineEditCustomParam = QLineEdit(self.layoutWidget)
+        self.labelCustomParam.setGeometry(QRect(11, 97, 83, 16))
+        self.labelServerNetConf = QLabel(self.groupBoxSetting)
+        self.labelServerNetConf.setObjectName(u"labelServerNetConf")
+        self.labelServerNetConf.setGeometry(QRect(11, 62, 98, 16))
+        self.labelServerPort = QLabel(self.groupBoxSetting)
+        self.labelServerPort.setObjectName(u"labelServerPort")
+        self.labelServerPort.setGeometry(QRect(11, 31, 68, 16))
+        self.lineServerPort = QLineEdit(self.groupBoxSetting)
+        self.lineServerPort.setObjectName(u"lineServerPort")
+        self.lineServerPort.setGeometry(QRect(116, 31, 171, 24))
+        self.pushButtonFileSelect = QPushButton(self.groupBoxSetting)
+        self.pushButtonFileSelect.setObjectName(u"pushButtonFileSelect")
+        self.pushButtonFileSelect.setGeometry(QRect(462, 62, 93, 28))
+        self.lineEditCustomParam = QLineEdit(self.groupBoxSetting)
         self.lineEditCustomParam.setObjectName(u"lineEditCustomParam")
-
-        self.gridLayout.addWidget(self.lineEditCustomParam, 2, 1, 1, 3)
-
+        self.lineEditCustomParam.setGeometry(QRect(116, 97, 441, 24))
+        self.lineEditServerNetConf = QLineEdit(self.groupBoxSetting)
+        self.lineEditServerNetConf.setObjectName(u"lineEditServerNetConf")
+        self.lineEditServerNetConf.setGeometry(QRect(116, 64, 311, 24))
 
         self.verticalLayoutNetSetting.addWidget(self.groupBoxSetting)
 
@@ -143,11 +118,6 @@ class Ui_HappynServerWindow(object):
         self.pushButtonExit = QPushButton(self.centralwidget)
         self.pushButtonExit.setObjectName(u"pushButtonExit")
         self.pushButtonExit.setGeometry(QRect(460, 739, 93, 30))
-
-        QWidget.setTabOrder(self.lineServerPort, self.lineEditServerID)
-        QWidget.setTabOrder(self.lineEditServerID, self.lineEditServerSubnet)
-        QWidget.setTabOrder(self.lineEditServerSubnet, self.lineEditCustomParam)
-        QWidget.setTabOrder(self.lineEditCustomParam, self.checkBoxAutoStart)
         QWidget.setTabOrder(self.checkBoxAutoStart, self.checkBoxTray)
         QWidget.setTabOrder(self.checkBoxTray, self.commandLinkButtonStart)
         QWidget.setTabOrder(self.commandLinkButtonStart, self.commandLinkButtonMonitor)
@@ -161,13 +131,11 @@ class Ui_HappynServerWindow(object):
     def retranslateUi(self, HappynServerWindow):
         HappynServerWindow.setWindowTitle(QCoreApplication.translate("HappynServerWindow", u"HappynServer", None))
         self.groupBoxSetting.setTitle(QCoreApplication.translate("HappynServerWindow", u"\u7f51\u7edc\u8bbe\u7f6e", None))
+        self.labelCustomParam.setText(QCoreApplication.translate("HappynServerWindow", u"\u81ea\u5b9a\u4e49\u53c2\u6570:", None))
+        self.labelServerNetConf.setText(QCoreApplication.translate("HappynServerWindow", u"\u7f51\u7edc\u8bbe\u5b9a\u6587\u4ef6:", None))
         self.labelServerPort.setText(QCoreApplication.translate("HappynServerWindow", u"\u76d1\u542c\u7aef\u53e3:", None))
         self.lineServerPort.setText(QCoreApplication.translate("HappynServerWindow", u"7654", None))
-        self.labelServerID.setText(QCoreApplication.translate("HappynServerWindow", u"\u670d\u52a1ID:", None))
-        self.lineEditServerID.setText(QCoreApplication.translate("HappynServerWindow", u"happyn001", None))
-        self.labelServerSubNet.setText(QCoreApplication.translate("HappynServerWindow", u"\u5b50\u7f51\u8bbe\u5b9a:", None))
-        self.lineEditServerSubnet.setText(QCoreApplication.translate("HappynServerWindow", u"192.168.100.0/24", None))
-        self.labelCustomParam.setText(QCoreApplication.translate("HappynServerWindow", u"\u81ea\u5b9a\u4e49\u53c2\u6570:", None))
+        self.pushButtonFileSelect.setText(QCoreApplication.translate("HappynServerWindow", u"\u9009\u62e9\u6587\u4ef6", None))
         self.groupBoxLogging.setTitle(QCoreApplication.translate("HappynServerWindow", u"\u65e5\u5fd7", None))
         self.groupBoxSystem.setTitle(QCoreApplication.translate("HappynServerWindow", u"\u670d\u52a1\u63a7\u5236", None))
         self.commandLinkButtonStart.setText(QCoreApplication.translate("HappynServerWindow", u"\u542f\u52a8", None))

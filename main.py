@@ -6,7 +6,7 @@ from happynserver.view.ui_trayicon import UITrayIcon
 from happynserver.view.ui_main_window import Ui_HappynServerWindow
 from happynserver.model.config import HPYConfigManager
 from happynserver.controller.service import ServiceManager
-from PySide2.QtWidgets import QApplication, QFrame, QMessageBox
+from PySide2.QtWidgets import QApplication, QFrame, QMessageBox, QFileDialog
 from PySide2.QtCore import QEvent
 from PySide2 import QtCore
 import platform
@@ -41,8 +41,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             # 使用默认配置初始化或更新注册表
             default_config = {
                 "ServerPort": 7644,
-                "ServerID": "happyn001",
-                "ServerSubnet": "192.168.100.0/24",
+                "ServerNetConf": "happyn001.conf",
                 "CustomParam": "",
                 "IsAutoStart": 1,
                 "IsMinToTray": 1
@@ -53,6 +52,11 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         self.commandLinkButtonMonitor.setEnabled(False)  # 初始状态设置为不可点击
         self.commandLinkButtonStart.clicked.connect(self.toggle_service)
         self.commandLinkButtonMonitor.clicked.connect(self.openMonitorWindow)
+        self.pushButtonFileSelect.clicked.connect(self.selectFile)
+
+    def selectFile(self):
+        filename, _ = QFileDialog.getOpenFileName()
+        self.lineEditServerNetConf.setText(filename)
 
     def get_current_working_directory(self):
         # 获取当前文件的绝对路径
@@ -97,30 +101,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             self.lineServerPort.setFocus()
             return False
 
-
-        # 正则表达式用于匹配IPv4地址/掩码格式
-        subnet_pattern = re.compile(r'^(\d{1,3}\.){3}\d{1,3}\/\d{1,2}$')
-        match = subnet_pattern.match(self.lineEditServerSubnet.text())
-
-        if match:
-            parts = self.lineEditServerSubnet.text().split('/')
-            ip_parts = parts[0].split('.')
-            mask = int(parts[1])
-
-            if all(0 <= int(part) <= 255 for part in ip_parts) and 0 <= mask <= 32:
-                self.config_manager.set('ServerSubnet', self.lineEditServerSubnet.text())
-            else:
-                QMessageBox.warning(self, "无效子网格式", "子网格式不正确，请输入正确的子网，如192.168.100.0/24。",
-                                    QMessageBox.Ok)
-                self.lineEditServerSubnet.setFocus()
-                return False
-        else:
-            QMessageBox.warning(self, "无效子网格式", "子网格式不正确，请输入正确的子网，如192.168.100.0/24。",
-                                QMessageBox.Ok)
-            self.lineEditServerSubnet.setFocus()
-            return False
-
-        self.config_manager.set('ServerID', self.lineEditServerID.text())
+        self.config_manager.set('ServerNetConf', self.lineEditServerNetConf.text())
         self.config_manager.set('CustomParam', self.lineEditCustomParam.text())
 
         self.config_manager.set('IsMinToTray', self.checkBoxTray.isChecked())
@@ -129,8 +110,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
 
     def load_gui_from_config(self):
         self.lineServerPort.setText(str(self.config_manager.get('ServerPort')))
-        self.lineEditServerID.setText(self.config_manager.get('ServerID'))
-        self.lineEditServerSubnet.setText(self.config_manager.get('ServerSubnet'))
+        self.lineEditServerNetConf.setText(self.config_manager.get('ServerNetConf'))
         self.lineEditCustomParam.setText(self.config_manager.get('CustomParam'))
 
         self.checkBoxTray.setChecked(self.config_manager.get('IsMinToTray'))

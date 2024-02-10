@@ -62,69 +62,90 @@
        <property name="title">
         <string>网络设置</string>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QLabel" name="labelCustomParam">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>561</width>
-          <height>88</height>
+          <x>11</x>
+          <y>97</y>
+          <width>83</width>
+          <height>16</height>
          </rect>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="labelServerPort">
-           <property name="text">
-            <string>监听端口:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="lineServerPort">
-           <property name="text">
-            <string>7654</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelServerID">
-           <property name="text">
-            <string>服务ID:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEditServerID">
-           <property name="text">
-            <string>happyn001</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QLabel" name="labelServerSubNet">
-           <property name="text">
-            <string>子网设定:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="3">
-          <widget class="QLineEdit" name="lineEditServerSubnet">
-           <property name="text">
-            <string>192.168.100.0/24</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="labelCustomParam">
-           <property name="text">
-            <string extracomment="高级参数，请参考帮助文档设置">自定义参数:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" colspan="3">
-          <widget class="QLineEdit" name="lineEditCustomParam"/>
-         </item>
-        </layout>
+        <property name="text">
+         <string extracomment="高级参数，请参考帮助文档设置">自定义参数:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelServerNetConf">
+        <property name="geometry">
+         <rect>
+          <x>11</x>
+          <y>62</y>
+          <width>98</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>网络设定文件:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelServerPort">
+        <property name="geometry">
+         <rect>
+          <x>11</x>
+          <y>31</y>
+          <width>68</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>监听端口:</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineServerPort">
+        <property name="geometry">
+         <rect>
+          <x>116</x>
+          <y>31</y>
+          <width>171</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>7654</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonFileSelect">
+        <property name="geometry">
+         <rect>
+          <x>462</x>
+          <y>62</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>选择文件</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditCustomParam">
+        <property name="geometry">
+         <rect>
+          <x>116</x>
+          <y>97</y>
+          <width>441</width>
+          <height>24</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditServerNetConf">
+        <property name="geometry">
+         <rect>
+          <x>116</x>
+          <y>64</y>
+          <width>311</width>
+          <height>24</height>
+         </rect>
+        </property>
        </widget>
       </widget>
      </item>
@@ -278,10 +299,6 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>lineServerPort</tabstop>
-  <tabstop>lineEditServerID</tabstop>
-  <tabstop>lineEditServerSubnet</tabstop>
-  <tabstop>lineEditCustomParam</tabstop>
   <tabstop>checkBoxAutoStart</tabstop>
   <tabstop>checkBoxTray</tabstop>
   <tabstop>commandLinkButtonStart</tabstop>
