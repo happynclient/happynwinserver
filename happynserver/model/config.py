@@ -5,8 +5,7 @@ config_manager = HPYConfigManager()
 # 设置默认配置
 default_config = {
     "ServerPort": 7644,
-    "ServerID": "happyn001",
-    "ServerSubnet": "192.168.100.0/24",
+    "ServerConf": "D:\\happynserver.conf",
     "CustomParam": "-v -M  -c /var/supernode/community.list -f",
     "IsAutoStart": 1,
     "IsMinToTray": 1
