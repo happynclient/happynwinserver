@@ -45,6 +45,32 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             }
             config_manager.update(config)
         self.load_gui_from_config()
+        self.serviceRunning = False
+
+        self.commandLinkButtonMonitor.setEnabled(False)  # 初始状态设置为不可点击
+        self.commandLinkButtonStart.clicked.connect(self.toggleService)
+        self.commandLinkButtonMonitor.clicked.connect(self.openMonitorWindow)
+
+    def toggleService(self):
+        if self.serviceRunning:
+            self.stopService()
+        else:
+            self.startService()
+
+    def startService(self):
+        # service_manager.start_service()  # 假设这是启动服务的方法
+        self.serviceRunning = True
+        self.commandLinkButtonStart.setText("停止")
+        self.commandLinkButtonMonitor.setEnabled(True)
+
+    def stopService(self):
+        # service_manager.stop_service()  # 假设这是停止服务的方法
+        self.serviceRunning = False
+        self.commandLinkButtonStart.setText("启动")
+        self.commandLinkButtonMonitor.setEnabled(False)
+
+    def openMonitorWindow(self):
+        pass
 
     def save_gui_to_config(self):
         pass
@@ -62,14 +88,15 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
                 super().changeEvent(event)  # 处理其他状态变化
 
     def closeEvent(self, event):
-        # 弹出确认对话框
-        reply = QMessageBox.question(self, '确认退出', '关闭窗口会退出当前服务，确定退出吗？',
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if self.serviceRunning:
+            # 弹出确认对话框
+            reply = QMessageBox.question(self, '确认退出', '关闭窗口会退出当前服务，确定退出吗？',
+                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
-        if reply == QMessageBox.Yes:
-            event.accept()  # 用户确认退出
-        else:
-            event.ignore()  # 用户取消退出，忽略关闭事件
+            if reply == QMessageBox.Yes:
+                event.accept()  # 用户确认退出
+            else:
+                event.ignore()  # 用户取消退出，忽略关闭事件
 
 
 if __name__ == "__main__":
