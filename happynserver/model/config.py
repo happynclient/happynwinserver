@@ -23,6 +23,7 @@ config_manager.set("服务器端口", 9090)
 # 删除配置项
 config_manager.delete("自定义参数")
 """
+import re
 import os
 import winreg as reg
 
@@ -92,3 +93,15 @@ class HPYConfigManager:
 
         # 返回生成的命令行字符串
         return command_line
+
+    def extract_manager_port(self, default_port=5645):
+        # 定义正则表达式，匹配"-t"后紧跟至少一个数字，可能有空格
+        pattern = re.compile(r'-t\s+(\d+)')
+        match = pattern.search(self.config.get("CustomParam", ""))
+
+        if match:
+            # 如果找到匹配，提取并返回端口号
+            return int(match.group(1))
+        else:
+            # 如果没有找到匹配，返回默认端口号
+            return default_port
