@@ -77,18 +77,15 @@ class HPYConfigManager:
         self.config.update(updates)
         self.save_config()
 
-    def generate_command_line(self, working_dir):
-        # 基础命令行前缀
-        command_base = os.path.join(working_dir, "happynsupernode")
-
+    def generate_command_line(self):
         # 服务器端口参数
-        port_param = f"-p {self.config.get('ServerPort', '')} -c {self.config.get('ServerNetConf', '')}"
+        port_param = f" -p {self.config.get('ServerPort', '')} -c {self.config.get('ServerNetConf', '')}"
 
         # 自定义参数，假设这部分不需要键名，直接使用值
         custom_param = self.config.get('CustomParam', '')
 
         # 组合所有部分
-        command_line = f"{command_base} {port_param} {custom_param}"
+        command_line = f"{port_param} {custom_param}"
 
         # 返回生成的命令行字符串
         return command_line

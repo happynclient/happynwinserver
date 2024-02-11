@@ -19,7 +19,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
 
         self.working_dir = self.get_current_working_directory()
         self.config_manager = HPYConfigManager()
-        self.service_manager = ServiceManager("HappynServer")
+        self.service_manager = ServiceManager("HappynServer", self.working_dir)
 
         # 将UI界面布局到Demo上；
         self.setupUi(self)
@@ -66,22 +66,21 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         return directory
 
     def toggle_service(self):
-        if self.service_manager.get_service_status():
+        if self.service_manager.is_service_exist() and self.service_manager.get_service_status():
             self.stop_service()
         else:
             self.start_service()
 
     def start_service(self):
         if self.save_gui_to_config():
-            command_line = self.config_manager.generate_command_line(self.working_dir)
-            self.service_manager.upsert_service(command_line)  # 假设这是启动服务的方法
+            command_line = self.config_manager.generate_command_line()
+            self.service_manager.upsert_service(command_line)
             self.service_manager.start_service()
             self.commandLinkButtonStart.setText("停止")
             self.commandLinkButtonMonitor.setEnabled(True)
 
 
     def stop_service(self):
-        # service_manager.stop_service()  # 假设这是停止服务的方法
         self.service_manager.stop_service()
         self.commandLinkButtonStart.setText("启动")
         self.commandLinkButtonMonitor.setEnabled(False)
@@ -125,7 +124,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
                 super().changeEvent(event)  # 处理其他状态变化
 
     def closeEvent(self, event):
-        if self.service_manager.get_service_status():
+        if self.service_manager.is_service_exist() and self.service_manager.get_service_status():
             # 弹出确认对话框
             reply = QMessageBox.question(self, '确认退出', '关闭窗口会退出当前服务，确定退出吗？',
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
