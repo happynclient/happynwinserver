@@ -4,7 +4,7 @@ import sys
 import threading
 import time
 
-from PySide2.QtWidgets import QApplication, QFrame, QMessageBox, QFileDialog
+from PySide2.QtWidgets import QApplication, QFrame, QMessageBox, QFileDialog, QCheckBox
 from PySide2.QtCore import QEvent, QObject, Signal, Slot
 from PySide2 import QtCore
 
@@ -63,6 +63,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         self.commandLinkButtonStart.clicked.connect(self.toggle_service)
         self.commandLinkButtonMonitor.clicked.connect(self.openMonitorWindow)
         self.pushButtonFileSelect.clicked.connect(self.selectFile)
+        self.checkBoxTray.stateChanged.connect(self.onCheckBoxTrayStateChanged)
 
         self.start_monitoring_service()
 
@@ -91,6 +92,16 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
 
     def stop_service(self):
         self.service_manager.stop_service()
+
+    def onCheckBoxTrayStateChanged(self, state):
+        # 根据复选框的状态执行操作
+        if state == QtCore.Qt.Checked:
+            print("Tray CheckBox is checked")
+            self.config_manager.set("IsMinToTray", 1)
+        else:
+            print("CheckBox is unchecked")
+            self.config_manager.set("IsMinToTray", 0)
+        self.config_manager.save_config()
 
     def openMonitorWindow(self):
         pass
@@ -155,7 +166,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
 
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
-            if self.isMinimized():
+            if self.isMinimized() and self.config_manager.get("IsMinToTray"):
                 self.hide()  # 在窗口最小化时隐藏窗口
                 self.tray_icon.show()  # 显示托盘图标
             else:
