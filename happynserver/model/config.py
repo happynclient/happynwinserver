@@ -14,7 +14,7 @@ default_config = {
 config_manager.update(default_config)
 
 # 读取特定配置项，如果不存在则使用默认值
-server_port = config_manager.get("服务器端口", 8080)
+server_port = config_manager.get("ServerPort", 8080)
 
 # 修改配置项
 config_manager.set("服务器端口", 9090)

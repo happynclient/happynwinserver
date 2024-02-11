@@ -12,6 +12,7 @@ from happynserver.view.ui_trayicon import UITrayIcon
 from happynserver.view.ui_main_window import Ui_HappynServerWindow
 from happynserver.model.config import HPYConfigManager
 from happynserver.controller.service import ServiceManager
+from happynserver.controller.server import ServerManager
 import platform
 
 
@@ -92,6 +93,12 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             self.service_manager.start_service()
 
     def stop_service(self):
+        manager = ServerManager()
+        port = self.config_manager.extract_manager_port()
+        result = manager.send_stop_signal(port)
+        print("Signal sent successfully." if result == 0 else "Failed to send signal.")
+        time.sleep(5)
+        self.worker_signals.update_log.emit()
         self.service_manager.stop_service()
 
     def onCheckBoxTrayStateChanged(self, state):
