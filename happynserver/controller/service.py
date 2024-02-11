@@ -78,6 +78,19 @@ class ServiceManager(metaclass=SingletonMeta):
         print(delete_command)
         subprocess.run(delete_command, shell=True)
 
+    # nssm set <servicename> Start SERVICE_AUTO_START
+    def set_service_auto_start(self):
+        auto_start_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} ' + \
+                             f'set {self.service_name} Start SERVICE_AUTO_START'
+        print(auto_start_command)
+        subprocess.run(auto_start_command, shell=True)
+
+    def unset_service_auto_start(self):
+        unset_auto_start_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} ' + \
+                             f'set {self.service_name} Start SERVICE_DEMAND_START'
+        print(unset_auto_start_command)
+        subprocess.run(unset_auto_start_command, shell=True)
+
     """Return: 1 running
                0 stopped
     """

@@ -64,6 +64,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         self.commandLinkButtonMonitor.clicked.connect(self.openMonitorWindow)
         self.pushButtonFileSelect.clicked.connect(self.selectFile)
         self.checkBoxTray.stateChanged.connect(self.onCheckBoxTrayStateChanged)
+        self.checkBoxAutoStart.stateChanged.connect(self.onCheckBoxAutoStartStateChanged)
 
         self.start_monitoring_service()
 
@@ -101,6 +102,18 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         else:
             print("CheckBox is unchecked")
             self.config_manager.set("IsMinToTray", 0)
+        self.config_manager.save_config()
+
+    def onCheckBoxAutoStartStateChanged(self, state):
+        # 根据复选框的状态执行操作
+        if state == QtCore.Qt.Checked:
+            print("AutoStart CheckBox is checked")
+            self.config_manager.set("IsAutoStart", 1)
+            self.service_manager.set_service_auto_start()
+        else:
+            print("AutoStart is unchecked")
+            self.config_manager.set("IsAutoStart", 0)
+            self.service_manager.unset_service_auto_start()
         self.config_manager.save_config()
 
     def openMonitorWindow(self):
