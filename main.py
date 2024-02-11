@@ -148,6 +148,9 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
                 else:
                     self.commandLinkButtonStart.setText("启动")
                     self.commandLinkButtonMonitor.setEnabled(False)
+            else:
+                self.commandLinkButtonStart.setText("启动")
+                self.commandLinkButtonMonitor.setEnabled(False)
             time.sleep(1)  # 每隔1秒检查一次服务状态
 
     def save_gui_to_config(self):
