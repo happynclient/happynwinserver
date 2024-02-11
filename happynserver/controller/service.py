@@ -5,11 +5,15 @@ service_manager1 = ServiceManager("MyService", "python my_service.py --port {por
 service_manager2 = ServiceManager("MyService", "python my_service.py --port {port} --id {service_id}")
 assert service_manager1 is service_manager2  # 这将证明service_manager1和service_manager2是同一个实例
 """
+import chardet
 import subprocess
 import os
 import win32service
 import win32serviceutil
 
+HAPPYNSERVER_DESC = "HappynServer is a light VPN software which makes it "\
+                    "easy to create virtual networks by passing intermediate firewalls. "\
+                    "Powered by happyn.net"
 
 class SingletonMeta(type):
     _instances = {}
@@ -36,9 +40,8 @@ class ServiceManager(metaclass=SingletonMeta):
         print(create_command)
         subprocess.run(create_command, shell=True)
 
-        desc = "Happynet is a light VPN software which makes it easy to create virtual networks by passing intermediate firewalls. Powered by happyn.net"
         setdesc_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")}  set {self.service_name} ' + \
-                          f'Description "{desc}"'
+                          f'Description "{HAPPYNSERVER_DESC}"'
         print(setdesc_command)
         subprocess.run(setdesc_command, shell=True)
 
@@ -46,6 +49,13 @@ class ServiceManager(metaclass=SingletonMeta):
                          f'AppStdout {self.log_file}'
         print(setlog_command)
         subprocess.run(setlog_command, shell=True)
+
+    # nssm.exe set <servicename> AppParameters <arguments>
+    def update_service(self, params):
+        update_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} set {self.service_name} ' + \
+                         f'AppParameters {os.path.join(self.working_dir, "utility", "happynsupernode.exe")} "{params}"'
+        print(update_command)
+        subprocess.run(update_command, shell=True)
 
     # nssm start <servicename>
     def start_service(self):
@@ -64,10 +74,9 @@ class ServiceManager(metaclass=SingletonMeta):
             return
         if self.get_service_status():
             self.stop_service()
-            self.service_status = 0
-            delete_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} remove {self.service_name}'
-            print(delete_command)
-            subprocess.run(delete_command, shell=True)
+        delete_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} remove {self.service_name} confirm'
+        print(delete_command)
+        subprocess.run(delete_command, shell=True)
 
     """Return: 1 running
                0 stopped
@@ -117,11 +126,21 @@ class ServiceManager(metaclass=SingletonMeta):
 
     def upsert_service(self, params):
         if self.is_service_exist():
-            self.delete_service()
-        self.create_service(params)
+            self.update_service(params)
+        else:
+            self.create_service(params)
 
     def get_logs(self):
         if os.path.exists(self.log_file):
-            with open(self.log_file, 'r') as file:
-                return file.read()
+            with open(self.log_file, 'rb') as file:
+                raw_data = file.read()
+            detection = chardet.detect(raw_data)
+            encoding = detection['encoding']
+            confidence = detection['confidence']
+            if confidence < 0.9:  # 示例阈值，根据需要调整
+                encoding = 'GBK'  # 或选择另一个可能的编码
+            try:
+                return raw_data.decode(encoding, errors='ignore')
+            except UnicodeDecodeError:
+                return "Failed to decode the log file with detected encoding."
         return "Log file does not exist."

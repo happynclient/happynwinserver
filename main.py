@@ -1,17 +1,24 @@
 import re
 import os
 import sys
+import threading
+import time
+
+from PySide2.QtWidgets import QApplication, QFrame, QMessageBox, QFileDialog
+from PySide2.QtCore import QEvent, QObject, Signal, Slot
+from PySide2 import QtCore
 
 from happynserver.view.ui_trayicon import UITrayIcon
 from happynserver.view.ui_main_window import Ui_HappynServerWindow
 from happynserver.model.config import HPYConfigManager
 from happynserver.controller.service import ServiceManager
-from PySide2.QtWidgets import QApplication, QFrame, QMessageBox, QFileDialog
-from PySide2.QtCore import QEvent
-from PySide2 import QtCore
 import platform
-from ctypes import windll
 
+
+# 定义一个用于通信的类
+class WorkerSignals(QObject):
+    # 定义一个信号，没有参数
+    update_log = Signal()
 
 class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
     def __init__(self):
@@ -31,6 +38,9 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         # 连接按钮的clicked信号到窗口的close方法
         self.pushButtonExit.clicked.connect(self.close)
 
+        # 创建信号实例
+        self.worker_signals = WorkerSignals()
+        self.worker_signals.update_log.connect(self.refresh_log_window)
 
     def setupUi(self, HappynServerWindow):
         # 首先调用基类的setupUi来继承原有的UI设置
@@ -54,6 +64,8 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         self.commandLinkButtonMonitor.clicked.connect(self.openMonitorWindow)
         self.pushButtonFileSelect.clicked.connect(self.selectFile)
 
+        self.start_monitoring_service()
+
     def selectFile(self):
         filename, _ = QFileDialog.getOpenFileName()
         self.lineEditServerNetConf.setText(filename)
@@ -76,17 +88,43 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             command_line = self.config_manager.generate_command_line()
             self.service_manager.upsert_service(command_line)
             self.service_manager.start_service()
-            self.commandLinkButtonStart.setText("停止")
-            self.commandLinkButtonMonitor.setEnabled(True)
-
 
     def stop_service(self):
         self.service_manager.stop_service()
-        self.commandLinkButtonStart.setText("启动")
-        self.commandLinkButtonMonitor.setEnabled(False)
 
     def openMonitorWindow(self):
         pass
+
+    # 在这里增加刷新日志窗口的逻辑
+    @Slot()
+    def refresh_log_window(self):
+        # 这里编写刷新日志窗口的代码
+        # 例如，self.textEditLog.setPlainText(log_content)
+        logs = self.service_manager.get_logs()
+        self.plainTextEditLogging.setPlainText(logs)
+        # 滚动到底部
+        scrollbar = self.plainTextEditLogging.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
+
+    def start_monitoring_service(self):
+        # 创建并启动监控线程
+        thread = threading.Thread(target=self.monitor_service_status)
+        thread.daemon = True
+        thread.start()
+
+    def monitor_service_status(self):
+        while True:
+            # 检测服务状态
+            if self.service_manager.is_service_exist():
+                if self.service_manager.get_service_status():
+                    self.commandLinkButtonStart.setText("停止")
+                    self.commandLinkButtonMonitor.setEnabled(True)
+                    # 如果服务正在运行，发射信号更新日志窗口
+                    self.worker_signals.update_log.emit()
+                else:
+                    self.commandLinkButtonStart.setText("启动")
+                    self.commandLinkButtonMonitor.setEnabled(False)
+            time.sleep(1)  # 每隔1秒检查一次服务状态
 
     def save_gui_to_config(self):
         try:
