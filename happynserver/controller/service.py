@@ -28,7 +28,20 @@ class ServiceManager(metaclass=SingletonMeta):
     def __init__(self, service_name, working_dir):
         self.service_name = service_name
         self.working_dir = working_dir
-        self.log_file = f'{os.path.join(self.working_dir, self.service_name)}.log'
+
+        programdata_path = os.getenv('PROGRAMDATA')
+        self.log_file = os.path.join(programdata_path, "happynet", self.service_name+'.log')
+        print('ProgramData Log Path:', self.log_file)
+        # 检查日志文件的目录是否存在，如果不存在，则创建
+        log_dir = os.path.dirname(self.log_file)
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir, exist_ok=True)  # 使用exist_ok=True避免在目录已存在时引发异常
+
+        # 检查日志文件是否存在，如果不存在，则创建
+        if not os.path.exists(self.log_file):
+            with open(self.log_file, 'a') as log_file:  # 使用'a'模式打开文件，如果文件不存在将会被创建
+                pass  # 不需要在文件中写入任何内容，仅确保文件存在
+
         self.service_status = 0
 
     # nssm install <servicename> <program> [<arguments>]
