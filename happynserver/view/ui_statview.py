@@ -86,7 +86,7 @@ class UI_StatWindow(QtWidgets.QWidget):
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
 
-        self.setWindowTitle("Happynet Device Monitor")
+        self.setWindowTitle("HappyServer Device Monitor")
         self.resize(900, 450)
 
         self.clientView.sortByColumn(1, QtCore.Qt.AscendingOrder)
@@ -155,8 +155,6 @@ class UI_StatWindow(QtWidgets.QWidget):
         model.setHeaderData(5, QtCore.Qt.Horizontal, "最近活动时间")
 
         devices = self.server_manager.get_edges()
-        if not devices:
-            self.addDevice(model, '','', '','', '','')
         for device in devices:
             self.addDevice(model, device['community'], device['desc'], device['macaddr'],
                              device['ip4addr'], device['sockaddr'],
