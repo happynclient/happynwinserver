@@ -3,7 +3,7 @@ import os
 import sys
 import threading
 import time
-
+from win32 import win32gui
 from PySide2.QtWidgets import QApplication, QFrame, QMessageBox, QFileDialog, QCheckBox
 from PySide2.QtCore import QEvent, QObject, Signal, Slot
 from PySide2 import QtCore
@@ -15,6 +15,8 @@ from happynserver.controller.service import ServiceManager
 from happynserver.controller.server import ServerManager
 import platform
 
+def windowEnumerationHandler(hwnd, top_windows):
+    top_windows.append((hwnd, win32gui.GetWindowText(hwnd)))
 
 # 定义一个用于通信的类
 class WorkerSignals(QObject):
@@ -97,7 +99,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         port = self.config_manager.extract_manager_port()
         result = manager.send_stop_signal(port)
         print("Signal sent successfully." if result == 0 else "Failed to send signal.")
-        time.sleep(5)
+        time.sleep(3)
         self.worker_signals.update_log.emit()
         self.service_manager.stop_service()
 
@@ -208,6 +210,14 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
 
 
 if __name__ == "__main__":
+    top_windows = []
+    win32gui.EnumWindows(windowEnumerationHandler, top_windows)
+    for i in top_windows:
+        if "HappynServer" in i[1]:  # CHANGE PROGRAM TO THE NAME OF YOUR WINDOW
+            win32gui.ShowWindow(i[0], 5)
+            win32gui.SetForegroundWindow(i[0])
+            sys.exit()
+
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
     mainWindow = HappynetUIMainWindow()
