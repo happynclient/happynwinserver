@@ -10,9 +10,10 @@ from PySide2 import QtCore
 
 from happynserver.view.ui_trayicon import UITrayIcon
 from happynserver.view.ui_main_window import Ui_HappynServerWindow
+from happynserver.view.ui_statview import UI_StatWindow
 from happynserver.model.config import HPYConfigManager
 from happynserver.controller.service import ServiceManager
-from happynserver.controller.server import ServerManager
+from happynserver.controller.server import HPYServerManager
 import platform
 
 def windowEnumerationHandler(hwnd, top_windows):
@@ -62,6 +63,8 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             self.config_manager.update(default_config)
         self.load_gui_from_config()
 
+        self.statwindow = None
+
         self.commandLinkButtonMonitor.setEnabled(False)  # 初始状态设置为不可点击
         self.commandLinkButtonStart.clicked.connect(self.toggle_service)
         self.commandLinkButtonMonitor.clicked.connect(self.openMonitorWindow)
@@ -95,11 +98,10 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             self.service_manager.start_service()
 
     def stop_service(self):
-        manager = ServerManager()
         port = self.config_manager.extract_manager_port()
-        result = manager.send_stop_signal(port)
-        print("Signal sent successfully." if result == 0 else "Failed to send signal.")
-        time.sleep(3)
+        manager = HPYServerManager(server_port=port)
+        manager.stop()
+        time.sleep(1)
         self.worker_signals.update_log.emit()
         self.service_manager.stop_service()
 
@@ -126,7 +128,9 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         self.config_manager.save_config()
 
     def openMonitorWindow(self):
-        pass
+        if not self.statwindow:  # 检查是否已经打开了统计窗口
+            self.statwindow = UI_StatWindow()  # 创建一个属性来保存它
+        self.statwindow.show()  # 显示窗口
 
     # 在这里增加刷新日志窗口的逻辑
     @Slot()
@@ -204,19 +208,22 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
             if reply == QMessageBox.Yes:
+                self.stop_service()
                 event.accept()  # 用户确认退出
             else:
                 event.ignore()  # 用户取消退出，忽略关闭事件
 
 
 if __name__ == "__main__":
+    """
     top_windows = []
     win32gui.EnumWindows(windowEnumerationHandler, top_windows)
     for i in top_windows:
-        if "HappynServer" in i[1]:  # CHANGE PROGRAM TO THE NAME OF YOUR WINDOW
+        if "HappynServerWindow" in i[1]:  # CHANGE PROGRAM TO THE NAME OF YOUR WINDOW
             win32gui.ShowWindow(i[0], 5)
             win32gui.SetForegroundWindow(i[0])
             sys.exit()
+    """
 
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)

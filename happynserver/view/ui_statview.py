@@ -1,19 +1,24 @@
 import time
 from PySide2 import QtCore, QtWidgets, QtGui
-from netcat import get_edges
+from ..controller.server import HPYServerManager
+from ..model.config import HPYConfigManager
 
 
-class Window(QtWidgets.QWidget):
+class UI_StatWindow(QtWidgets.QWidget):
     def __init__(self):
-        super(Window, self).__init__()
+        super(UI_StatWindow, self).__init__()
+
+        self.config_manager = HPYConfigManager()
+        manager_port = self.config_manager.extract_manager_port()
+        self.server_manager = HPYServerManager(server_port=manager_port)
 
         self.clientModel = QtCore.QSortFilterProxyModel()
         self.clientModel.setDynamicSortFilter(True)
         # default set filter all key columns
         self.clientModel.setFilterKeyColumn(-1)
 
-        self.serverGroupBox = QtWidgets.QGroupBox("happyn服务端列表")
-        self.clientGroupBox = QtWidgets.QGroupBox("happyn网络客户端列表(不包括本机)")
+        self.serverGroupBox = QtWidgets.QGroupBox("happyn网络设备列表")
+        self.clientGroupBox = QtWidgets.QGroupBox("happyn联网设备统计")
 
         self.serverView = QtWidgets.QTreeView()
         self.serverView.setRootIsDecorated(False)
@@ -77,7 +82,7 @@ class Window(QtWidgets.QWidget):
         self.setLayout(mainLayout)
 
         icon = QtGui.QIcon()
-        icon.addFile(u"happynet.ico", QtCore.QSize(),
+        icon.addFile(u":/icons/icon144.png", QtCore.QSize(),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
 
@@ -130,10 +135,10 @@ class Window(QtWidgets.QWidget):
 
         self.clientModel.setSortCaseSensitivity(caseSensitivity)
 
-    def addDevice(self, model, name, mode, mac, ip, sockaddr, uptime):
+    def addDevice(self, model, community, name, mac, ip, sockaddr, uptime):
         model.insertRow(0)
-        model.setData(model.index(0, 0), name)
-        model.setData(model.index(0, 1), mode)
+        model.setData(model.index(0, 0), community)
+        model.setData(model.index(0, 1), name)
         model.setData(model.index(0, 2), mac)
         model.setData(model.index(0, 3), ip)
         model.setData(model.index(0, 4), sockaddr)
@@ -142,15 +147,18 @@ class Window(QtWidgets.QWidget):
     def updateDeviceStatModel(self):
         model = QtGui.QStandardItemModel(0, 6, self)
 
-        model.setHeaderData(0, QtCore.Qt.Horizontal, "设备名称")
-        model.setHeaderData(1, QtCore.Qt.Horizontal, "通讯模式")
+        model.setHeaderData(0, QtCore.Qt.Horizontal, "网络服务ID")
+        model.setHeaderData(1, QtCore.Qt.Horizontal, "设备名称")
         model.setHeaderData(2, QtCore.Qt.Horizontal, "happyn mac地址")
         model.setHeaderData(3, QtCore.Qt.Horizontal, "happyn 内网ip")
-        model.setHeaderData(4, QtCore.Qt.Horizontal, "本机对外通信ip:port")
+        model.setHeaderData(4, QtCore.Qt.Horizontal, "外网通信ip:port")
         model.setHeaderData(5, QtCore.Qt.Horizontal, "最近活动时间")
 
-        for device in get_edges():
-            self.addDevice(model, device['desc'], device['mode'], device['macaddr'],
+        devices = self.server_manager.get_edges()
+        if not devices:
+            self.addDevice(model, '','', '','', '','')
+        for device in devices:
+            self.addDevice(model, device['community'], device['desc'], device['macaddr'],
                              device['ip4addr'], device['sockaddr'],
                              QtCore.QDateTime.fromMSecsSinceEpoch(device['last_seen']*1000).toString('yyyy-MM-dd hh:mm:ss'))
                       #QtCore.QDateTime(QtCore.QDate(2006, 12, 22), QtCore.QTime(9, 44)))
