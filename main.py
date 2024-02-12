@@ -215,7 +215,6 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
 
 
 if __name__ == "__main__":
-    """
     top_windows = []
     win32gui.EnumWindows(windowEnumerationHandler, top_windows)
     for i in top_windows:
@@ -223,7 +222,6 @@ if __name__ == "__main__":
             win32gui.ShowWindow(i[0], 5)
             win32gui.SetForegroundWindow(i[0])
             sys.exit()
-    """
 
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
