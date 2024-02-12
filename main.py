@@ -14,6 +14,7 @@ from happynserver.view.ui_statview import UI_StatWindow
 from happynserver.model.config import HPYConfigManager
 from happynserver.controller.service import ServiceManager
 from happynserver.controller.server import HPYServerManager
+from happynserver.controller.system import add_to_startup, remove_from_startup
 import platform
 
 def windowEnumerationHandler(hwnd, top_windows):
@@ -121,10 +122,12 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             print("AutoStart CheckBox is checked")
             self.config_manager.set("IsAutoStart", 1)
             self.service_manager.set_service_auto_start()
+            add_to_startup()
         else:
             print("AutoStart is unchecked")
             self.config_manager.set("IsAutoStart", 0)
             self.service_manager.unset_service_auto_start()
+            remove_from_startup()
         self.config_manager.save_config()
 
     def openMonitorWindow(self):
