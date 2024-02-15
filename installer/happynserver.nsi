@@ -7,7 +7,7 @@ Unicode True
 
 
 Name "happynserver"
-OutFile "happyserver_install.exe"
+OutFile "happynserver_install.exe"
 
 RequestExecutionLevel admin
 
@@ -19,7 +19,7 @@ InstallDir "$PROGRAMFILES\happynserver"
 InstallDirRegKey HKLM "Software\happynserver" "Path"
 
 Function finishpageaction
-CreateShortcut "$DESKTOP\happynsrever.lnk" "$INSTDIR\happynserver.exe"
+CreateShortcut "$DESKTOP\happynserver.lnk" "$INSTDIR\happynserver.exe"
 FunctionEnd
 
 !define MUI_FINISHPAGE_SHOWREADME ""

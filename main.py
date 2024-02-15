@@ -80,11 +80,9 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         self.lineEditServerNetConf.setText(filename)
 
     def get_current_working_directory(self):
-        # 获取当前文件的绝对路径
-        abs_file_path = os.path.abspath(__file__)
-        # 获取当前文件所在的目录
-        directory = os.path.dirname(abs_file_path)
-        return directory
+        base_path = os.path.realpath(os.path.dirname(sys.argv[0]))
+        # QMessageBox.warning(self, "路径", base_path, QMessageBox.Ok)
+        return base_path
 
     def toggle_service(self):
         if self.service_manager.is_service_exist() and self.service_manager.get_service_status():
