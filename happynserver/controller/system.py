@@ -14,8 +14,9 @@ def add_to_startup(file_path=""):
 
     # 如果没有提供一个路径，就用当前执行的文件路径
     if file_path == "":
-        file_path = os.path.dirname(os.path.realpath(__file__))
-        file_path = os.path.join(file_path, QCoreApplication.applicationName())
+        file_path = os.path.realpath(os.path.dirname(sys.argv[0]))
+        file_path = os.path.join(file_path, QCoreApplication.applicationName()+'.exe')
+        print(file_path)
 
     # 注册表项名
     key = r"Software\Microsoft\Windows\CurrentVersion\Run"
