@@ -55,8 +55,8 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         if not self.config_manager.load_config():
             # 使用默认配置初始化或更新注册表
             default_config = {
-                "ServerPort": 7644,
-                "ServerNetConf": "happyn001.conf",
+                "ServerPort": 7654,
+                "ServerNetConf": "happynserver.conf",
                 "CustomParam": "",
                 "IsAutoStart": 1,
                 "IsMinToTray": 1
@@ -221,7 +221,7 @@ if __name__ == "__main__":
     top_windows = []
     win32gui.EnumWindows(windowEnumerationHandler, top_windows)
     for i in top_windows:
-        if "HappynServerWindow" in i[1]:  # CHANGE PROGRAM TO THE NAME OF YOUR WINDOW
+        if "HappynServer" in i[1]:  # CHANGE PROGRAM TO THE NAME OF YOUR WINDOW
             win32gui.ShowWindow(i[0], 5)
             win32gui.SetForegroundWindow(i[0])
             sys.exit()
