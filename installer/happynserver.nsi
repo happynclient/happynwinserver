@@ -5,7 +5,6 @@ Unicode True
 !include "LogicLib.nsh"
 !include "x64.nsh"
 
-${StrLoc}
 
 Name "happynserver"
 OutFile "happyserver_install.exe"
@@ -14,10 +13,10 @@ RequestExecutionLevel admin
 
 BrandingText "HappynServer Installer"
 !define PRODUCT_VERSION "0.1.0.0"
-!define PRODUCT_PUBLISHER "happyn.net"
+!define PRODUCT_PUBLISHER "happyn.cn"
 
-InstallDir "$PROGRAMFILES\HappynServer"
-InstallDirRegKey HKLM "Software\HappynServer" "Path"
+InstallDir "$PROGRAMFILES\happynserver"
+InstallDirRegKey HKLM "Software\happynserver" "Path"
 
 Function finishpageaction
 CreateShortcut "$DESKTOP\happynsrever.lnk" "$INSTDIR\happynserver.exe"
@@ -60,32 +59,36 @@ Section "happynserver"
   SectionIn RO
   SetOutPath $INSTDIR
 
-  CreateDirectory "$SMPROGRAMS\HappynServer"
+  CreateDirectory "$SMPROGRAMS\happynserver"
   File "..\res\happynserver.ico"
 
-  WriteUninstaller "happyserver_uninst.exe"
-  WriteRegStr HKLM "SOFTWARE\HappynServer" "Path" '$INSTDIR'
-  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\HappynServer" "DisplayName" "happynserver"
-  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\HappynServer" "UninstallString" '"$INSTDIR\happynserver_uninst.exe"'
-  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\HappynServer" "QuietUninstallString" '"$INSTDIR\happynserver_uninst.exe" /S'
-  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\HappynServer" "InstallLocation" '"$INSTDIR"'
-  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\HappynServer" "DisplayIcon" '"$INSTDIR\happynserver.ico"'
-  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\HappynServer" "DisplayVersion" "${PRODUCT_VERSION}"
-  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\HappynServer" "Publisher" "${PRODUCT_PUBLISHER}"
+  WriteUninstaller "happynserver_uninst.exe"
+  WriteRegStr HKLM "SOFTWARE\happynserver" "Path" '$INSTDIR'
+  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver" "DisplayName" "happynserver"
+  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver" "UninstallString" '"$INSTDIR\happynserver_uninst.exe"'
+  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver" "QuietUninstallString" '"$INSTDIR\happynserver_uninst.exe" /S'
+  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver" "InstallLocation" '"$INSTDIR"'
+  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver" "DisplayIcon" '"$INSTDIR\happynserver.ico"'
+  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver" "DisplayVersion" "${PRODUCT_VERSION}"
+  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver" "Publisher" "${PRODUCT_PUBLISHER}"
 
 
 ; --------------------------------------------------------
 ; happynsupernode.exe
 ; --------------------------------------------------------
-  SetOutPath $INSTDIR
+  SetOutPath "$INSTDIR\utility"
     File "..\utility\happynsupernode.exe"
     File "..\utility\happynssm.exe"
     File "..\utility\happynportfwd.exe"
     File "..\utility\happynroute.exe"
+
+  
+  SetOutPath "$INSTDIR\res"
     File "..\res\happynserver.ico"
     File "..\res\icon144.png"
-  
 
+  SetOutPath "$INSTDIR\etc"
+    File "..\etc\happynserver.conf"
 
 ; --------------------------------------------------------
 ; dll files
@@ -105,13 +108,13 @@ Section "happynserver"
 ; --------------------------------------------------------
   SetOutPath $INSTDIR
 
-  CreateShortCut "$SMPrograms\HappynServer\happynserver.lnk" "$INSTDIR\happynserver.exe"
+  CreateShortCut "$SMPrograms\happynserver\happynserver.lnk" "$INSTDIR\happynserver.exe"
   File "..\dist\happynserver.exe"
 
 ; --------------------------------------------------------
 ; FINAL
 ; --------------------------------------------------------
-  CreateShortCut "$SMPROGRAMS\HappynServer\Uninstall happynserver.lnk" "$INSTDIR\happynserver_uninst.exe"
+  CreateShortCut "$SMPROGRAMS\happynserver\Uninstall happynserver.lnk" "$INSTDIR\happynserver_uninst.exe"
 SectionEnd
 
 Function .onInit
@@ -129,12 +132,18 @@ Section "Uninstall"
   SimpleSC::RemoveService "HappynServer"
   Delete "$INSTDIR\platforms\*.*"
   RMDIR "$INSTDIR\platforms"
+  Delete "$INSTDIR\res\*.*"
+  RMDIR "$INSTDIR\res"
+  Delete "$INSTDIR\etc\*.*"
+  RMDIR "$INSTDIR\etc"
+  Delete "$INSTDIR\utility\*.*"
+  RMDIR "$INSTDIR\utility"
   Delete "$INSTDIR\*.*"
-  Delete "$SMPROGRAMS\HappynServer\*.*"
-  Delete "$SMPROGRAMS\HappynServer"
+  Delete "$SMPROGRAMS\happynserver\*.*"
+  Delete "$SMPROGRAMS\happynserver"
   RMDir "$INSTDIR"
   DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver"
-  DeleteRegKey HKLM "SOFTWARE\HappynServer"
+  DeleteRegKey HKLM "SOFTWARE\happynserver"
   DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "happynserver"
   Delete "$DESKTOP\happynserver.lnk"
 

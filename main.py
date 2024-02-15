@@ -56,7 +56,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
             # 使用默认配置初始化或更新注册表
             default_config = {
                 "ServerPort": 7654,
-                "ServerNetConf": "happynserver.conf",
+                "ServerNetConf": "etc/happynserver.conf",
                 "CustomParam": "",
                 "IsAutoStart": 1,
                 "IsMinToTray": 1

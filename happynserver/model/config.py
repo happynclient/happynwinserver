@@ -27,7 +27,7 @@ import os
 import winreg as reg
 
 class HPYConfigManager:
-    def __init__(self, base_key_path="SOFTWARE\\HappynServer\\Parameters"):
+    def __init__(self, base_key_path="SOFTWARE\\happynserver\\Parameters"):
         self.base_key_path = base_key_path
         self.config = self.load_config()
 
