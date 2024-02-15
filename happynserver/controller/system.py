@@ -5,6 +5,9 @@ from PySide2.QtWidgets import QApplication, QMessageBox
 from PySide2.QtCore import QCoreApplication
 import winreg as reg
 
+from .logger import setup_logger
+logger = setup_logger()
+
 
 def add_to_startup(file_path=""):
     # 判断是否有管理员权限，并获取
@@ -16,7 +19,7 @@ def add_to_startup(file_path=""):
     if file_path == "":
         file_path = os.path.realpath(os.path.dirname(sys.argv[0]))
         file_path = os.path.join(file_path, QCoreApplication.applicationName()+'.exe')
-        print(file_path)
+        logger.info("Add to startup: {}".format(file_path))
 
     # 注册表项名
     key = r"Software\Microsoft\Windows\CurrentVersion\Run"
@@ -37,7 +40,7 @@ def add_to_startup(file_path=""):
 def remove_from_startup():
     # 检查权限
     if not ctypes.windll.shell32.IsUserAnAdmin():
-        print("请使用管理员权限运行该程序以修改注册表.")
+        QMessageBox.warning(None, '权限不足', '请使用管理员权限运行该程序以修改注册表.')
         return False
 
     # 注册表中负责开机自启的键的路径
@@ -50,10 +53,10 @@ def remove_from_startup():
         reg.DeleteValue(registry_key, QCoreApplication.applicationName())
         # 关闭键
         reg.CloseKey(registry_key)
-        print(f"成功从开机自启动中移除{QCoreApplication.applicationName()}")
+        logger.info(f"成功从开机自启动中移除{QCoreApplication.applicationName()}")
         return True
     except WindowsError:
-        print("移除开机自启动失败")
+        QMessageBox.warning(None, '权限不足', '移除开机自启动失败')
         return False
 
 # 使用以下方式在您的主应用程序中调用此函数:
