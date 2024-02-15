@@ -13,7 +13,7 @@ OutFile "happyserver_install.exe"
 RequestExecutionLevel admin
 
 BrandingText "HappynServer Installer"
-!define PRODUCT_VERSION "1.0.0.0"
+!define PRODUCT_VERSION "0.1.0.0"
 !define PRODUCT_PUBLISHER "happyn.net"
 
 InstallDir "$PROGRAMFILES\HappynServer"
@@ -80,10 +80,10 @@ Section "happynserver"
   SetOutPath $INSTDIR
     File "..\utility\happynsupernode.exe"
     File "..\utility\happynssm.exe"
-    File "..\utility\x64\happynportfwd.exe"
+    File "..\utility\happynportfwd.exe"
     File "..\utility\happynroute.exe"
     File "..\res\happynserver.ico"
-    File "..\res\icon144.ico"
+    File "..\res\icon144.png"
   
 
 
@@ -106,7 +106,7 @@ Section "happynserver"
   SetOutPath $INSTDIR
 
   CreateShortCut "$SMPrograms\HappynServer\happynserver.lnk" "$INSTDIR\happynserver.exe"
-  File "happynserver.exe"
+  File "..\dist\happynserver.exe"
 
 ; --------------------------------------------------------
 ; FINAL

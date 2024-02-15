@@ -142,8 +142,7 @@ class Ui_HappynServerWindow(object):
         self.commandLinkButtonMonitor.setText(QCoreApplication.translate("HappynServerWindow", u"\u67e5\u770b\u5728\u7ebf\u8bbe\u5907", None))
         self.checkBoxAutoStart.setText(QCoreApplication.translate("HappynServerWindow", u"\u5f00\u673a\u81ea\u542f\u52a8", None))
         self.checkBoxTray.setText(QCoreApplication.translate("HappynServerWindow", u"\u6700\u5c0f\u5316\u5230\u6258\u76d8", None))
-        self.labelHappynVersion.setText(QCoreApplication.translate("HappynServerWindow", u"HappynServer 1.0", None))
+        self.labelHappynVersion.setText(QCoreApplication.translate("HappynServerWindow", u"HappynServer 0.1", None))
         self.labelHappynCopyright.setText(QCoreApplication.translate("HappynServerWindow", u"Powered by happyn.net", None))
         self.pushButtonExit.setText(QCoreApplication.translate("HappynServerWindow", u"\u9000\u51fa", None))
     # retranslateUi
-
