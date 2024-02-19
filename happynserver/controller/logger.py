@@ -3,33 +3,50 @@ import os
 
 
 # 定义日志的配置函数
+# 定义检查和创建日志文件路径的函数
+def ensure_log_path_exists(log_file):
+    log_dir = os.path.dirname(log_file)
+    if not os.path.exists(log_dir):
+        try:
+            os.makedirs(log_dir, exist_ok=True)
+        except Exception as e:
+            print(f"Error creating log directory {log_dir}: {e}")
+            return False
+
+    if not os.path.exists(log_file):
+        try:
+            with open(log_file, 'a'):
+                pass
+        except Exception as e:
+            print(f"Error creating log file {log_file}: {e}")
+            return False
+    return True
+
+
+# 定义日志的配置函数
 def setup_logger(log_file=None):
     if not log_file:
         programdata_path = os.getenv('PROGRAMDATA')
+        if not programdata_path:
+            programdata_path = os.path.expanduser("~")  # 使用主目录作为备选路径
+
         log_file = os.path.join(programdata_path, "happynet", 'HappynServerDebug.log')
         print('ProgramData Log Path:', log_file)
-        # 检查日志文件的目录是否存在，如果不存在，则创建
-        log_dir = os.path.dirname(log_file)
-        if not os.path.exists(log_dir):
-            os.makedirs(log_dir, exist_ok=True)  # 使用exist_ok=True避免在目录已存在时引发异常
 
-        # 检查日志文件是否存在，如果不存在，则创建
-        if not os.path.exists(log_file):
-            with open(log_file, 'a') as log_file_set:  # 使用'a'模式打开文件，如果文件不存在将会被创建
-                pass  # 不需要在文件中写入任何内容，仅确保文件存在
+        # 调用函数检查日志文件的目录和文件是否存在
+        if not ensure_log_path_exists(log_file):
+            return None  # 如果创建文件或目录失败，则返回
 
-    # 获取一个logger对象
-    logger = logging.getLogger('simple_logger')
-    logger.setLevel(logging.DEBUG)  # 设置日志级别
+    logger_name = __name__
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(logging.DEBUG)
 
-    # 创建一个文件处理器，并设置级别和格式化器
-    file_handler = logging.FileHandler(log_file)
-    file_handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    file_handler.setFormatter(formatter)
-
-    # 添加文件处理器到logger
-    logger.addHandler(file_handler)
+    if not logger.handlers:
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
 
     return logger
 
