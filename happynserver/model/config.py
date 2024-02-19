@@ -79,7 +79,8 @@ class HPYConfigManager:
 
     def generate_command_line(self):
         # 服务器端口参数
-        port_param = f" -p {self.config.get('ServerPort', '')} -c {self.config.get('ServerNetConf', '')}"
+        port_param = f' -p {self.config.get("ServerPort", "")} -c '\
+                     f'"""{self.config.get("ServerNetConf", "")}"""'
 
         # 自定义参数，假设这部分不需要键名，直接使用值
         custom_param = self.config.get('CustomParam', '')
