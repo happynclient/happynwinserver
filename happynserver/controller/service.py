@@ -16,7 +16,7 @@ logger = setup_logger()
 
 HAPPYNSERVER_DESC = "HappynServer is a light VPN software which makes it "\
                     "easy to create virtual networks by passing intermediate firewalls. "\
-                    "Powered by happyn.net"
+                    "Powered by happyn.cn"
 
 class SingletonMeta(type):
     _instances = {}
@@ -34,7 +34,7 @@ class ServiceManager(metaclass=SingletonMeta):
 
         programdata_path = os.getenv('PROGRAMDATA')
         self.log_file = os.path.join(programdata_path, "happynet", self.service_name+'.log')
-        logger.info('ProgramData Log Path:', self.log_file)
+        logger.info("ProgramData Log Path:{}".format(self.log_file))
         # 检查日志文件的目录是否存在，如果不存在，则创建
         log_dir = os.path.dirname(self.log_file)
         if not os.path.exists(log_dir):
@@ -51,36 +51,36 @@ class ServiceManager(metaclass=SingletonMeta):
     # nssm set <servicename> Description "xxxx"
     # nssm set <servicename> AppStdout <logpath>
     def create_service(self, params):
-        create_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} install {self.service_name} ' + \
-                         f'{os.path.join(self.working_dir, "utility", "happynsupernode.exe")} "{params}"'
+        create_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}" install {self.service_name} """ + \
+                         f""" "{os.path.join(self.working_dir, 'utility', 'happynsupernode.exe')}" "{params}" """
         logger.info(create_command)
         subprocess.run(create_command, shell=True)
 
-        setdesc_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")}  set {self.service_name} ' + \
+        setdesc_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}"  set {self.service_name} """ + \
                           f'Description "{HAPPYNSERVER_DESC}"'
         logger.info(setdesc_command)
         subprocess.run(setdesc_command, shell=True)
 
-        setlog_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")}  set {self.service_name} ' + \
+        setlog_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}"  set {self.service_name} """ + \
                          f'AppStdout {self.log_file}'
         logger.info(setlog_command)
         subprocess.run(setlog_command, shell=True)
 
     # nssm.exe set <servicename> AppParameters <arguments>
     def update_service(self, params):
-        update_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} set {self.service_name} ' + \
-                         f'AppParameters {os.path.join(self.working_dir, "utility", "happynsupernode.exe")} "{params}"'
+        update_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}" set {self.service_name} """ + \
+                         f"""AppParameters "{os.path.join(self.working_dir, 'utility', 'happynsupernode.exe')}" "{params}" """
         logger.info(update_command)
         subprocess.run(update_command, shell=True)
 
     # nssm start <servicename>
     def start_service(self):
-        start_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} start {self.service_name}'
+        start_command = f'"{os.path.join(self.working_dir, "utility", "happynssm.exe")}" start {self.service_name}'
         logger.info(start_command)
         subprocess.run(start_command, shell=True)
 
     def stop_service(self):
-        stop_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} stop {self.service_name}'
+        stop_command = f'"{os.path.join(self.working_dir, "utility", "happynssm.exe")}" stop {self.service_name}'
         logger.info(stop_command)
         subprocess.run(stop_command, shell=True)
 
@@ -90,19 +90,19 @@ class ServiceManager(metaclass=SingletonMeta):
             return
         if self.get_service_status():
             self.stop_service()
-        delete_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} remove {self.service_name} confirm'
+        delete_command = f'"{os.path.join(self.working_dir, "utility", "happynssm.exe")}" remove {self.service_name} confirm'
         logger.info(delete_command)
         subprocess.run(delete_command, shell=True)
 
     # nssm set <servicename> Start SERVICE_AUTO_START
     def set_service_auto_start(self):
-        auto_start_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} ' + \
+        auto_start_command = f'"{os.path.join(self.working_dir, "utility", "happynssm.exe")}" ' + \
                              f'set {self.service_name} Start SERVICE_AUTO_START'
         logger.info(auto_start_command)
         subprocess.run(auto_start_command, shell=True)
 
     def unset_service_auto_start(self):
-        unset_auto_start_command = f'{os.path.join(self.working_dir, "utility", "happynssm.exe")} ' + \
+        unset_auto_start_command = f'"{os.path.join(self.working_dir, "utility", "happynssm.exe")}" ' + \
                              f'set {self.service_name} Start SERVICE_DEMAND_START'
         logger.info(unset_auto_start_command)
         subprocess.run(unset_auto_start_command, shell=True)
