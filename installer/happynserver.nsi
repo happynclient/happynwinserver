@@ -90,6 +90,9 @@ Section "happynserver"
   SetOutPath "$INSTDIR\etc"
     File "..\etc\happynserver.conf"
 
+  SetOutPath "$APPDATA\etc"
+    File "..\etc\happynserver.conf"
+
 ; --------------------------------------------------------
 ; dll files
 ; --------------------------------------------------------

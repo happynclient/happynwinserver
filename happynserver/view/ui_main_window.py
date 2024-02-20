@@ -35,7 +35,7 @@ class Ui_HappynServerWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayoutWidget = QWidget(self.centralwidget)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(10, 0, 581, 151))
+        self.verticalLayoutWidget.setGeometry(QRect(10, 5, 581, 151))
         self.verticalLayoutNetSetting = QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayoutNetSetting.setObjectName(u"verticalLayoutNetSetting")
         self.verticalLayoutNetSetting.setContentsMargins(0, 0, 0, 0)
