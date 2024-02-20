@@ -58,7 +58,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
                 "ServerPort": 7654,
                 "ServerNetConf": "etc/happynserver.conf",
                 "CustomParam": "",
-                "IsAutoStart": 1,
+                "IsAutoStart": 0,
                 "IsMinToTray": 1
             }
             self.config_manager.update(default_config)
