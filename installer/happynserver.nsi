@@ -24,11 +24,11 @@ FunctionEnd
 
 !define MUI_FINISHPAGE_SHOWREADME ""
 !define MUI_FINISHPAGE_SHOWREADME_CHECKED
-!define MUI_FINISHPAGE_SHOWREADME_TEXT "��������ͼ��"
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "创建桌面图标"
 !define MUI_FINISHPAGE_SHOWREADME_FUNCTION finishpageaction
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\happynserver.exe"
-!define MUI_FINISHPAGE_RUN_TEXT "��������happynserver"
+!define MUI_FINISHPAGE_RUN_TEXT "现在运行happynserver"
 !insertmacro MUI_PAGE_LICENSE "../COPYING"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
