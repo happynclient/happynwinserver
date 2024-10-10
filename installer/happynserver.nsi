@@ -12,7 +12,7 @@ OutFile "happynserver_install.exe"
 RequestExecutionLevel admin
 
 BrandingText "HappynServer Installer"
-!define PRODUCT_VERSION "0.1.0.0"
+!define PRODUCT_VERSION "0.2.0.0"
 !define PRODUCT_PUBLISHER "happyn.cn"
 
 InstallDir "$PROGRAMFILES\happynserver"
@@ -24,11 +24,11 @@ FunctionEnd
 
 !define MUI_FINISHPAGE_SHOWREADME ""
 !define MUI_FINISHPAGE_SHOWREADME_CHECKED
-!define MUI_FINISHPAGE_SHOWREADME_TEXT "´´½¨×ÀÃæÍ¼±ê"
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½"
 !define MUI_FINISHPAGE_SHOWREADME_FUNCTION finishpageaction
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\happynserver.exe"
-!define MUI_FINISHPAGE_RUN_TEXT "ÏÖÔÚÔËÐÐhappynserver"
+!define MUI_FINISHPAGE_RUN_TEXT "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½happynserver"
 !insertmacro MUI_PAGE_LICENSE "../COPYING"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
