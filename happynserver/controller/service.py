@@ -66,7 +66,38 @@ class ServiceManager(metaclass=SingletonMeta):
         logger.info(setlog_command)
         subprocess.run(setlog_command, shell=True)
 
-    # nssm.exe set <servicename> AppParameters <arguments>
+        setlog_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}"  set {self.service_name} """ + \
+                         f'AppStdoutCreationDisposition 4'
+        logger.info(setlog_command)
+        subprocess.run(setlog_command, shell=True)
+
+        setlog_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}"  set {self.service_name} """ + \
+                         f'AppStderrCreationDisposition 4'
+        logger.info(setlog_command)
+        subprocess.run(setlog_command, shell=True)
+
+        setlog_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}"  set {self.service_name} """ + \
+                         f'AppRotateFiles 1'
+        logger.info(setlog_command)
+        subprocess.run(setlog_command, shell=True)
+
+        setlog_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}"  set {self.service_name} """ + \
+                         f'AppRotateOnline 1'
+        logger.info(setlog_command)
+        subprocess.run(setlog_command, shell=True)
+
+        setlog_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}"  set {self.service_name} """ + \
+                         f'AppRotateSeconds 864000'
+        logger.info(setlog_command)
+        subprocess.run(setlog_command, shell=True)
+
+        setlog_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}"  set {self.service_name} """ + \
+                         f'AppRotateBytes 16777216'
+        logger.info(setlog_command)
+        subprocess.run(setlog_command, shell=True)
+
+
+   # nssm.exe set <servicename> AppParameters <arguments>
     def update_service(self, params):
         update_command = f""" "{os.path.join(self.working_dir, 'utility', 'happynssm.exe')}" set {self.service_name} """ + \
                          f"""AppParameters "{os.path.join(self.working_dir, 'utility', 'happynsupernode.exe')}" "{params}" """
