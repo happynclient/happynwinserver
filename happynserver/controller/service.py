@@ -152,10 +152,6 @@ class ServiceManager(metaclass=SingletonMeta):
             # 查询服务状态
             status = win32service.QueryServiceStatusEx(svc)
 
-            # 关闭服务和服务控制管理器的句柄
-            win32service.CloseServiceHandle(svc)
-            win32service.CloseServiceHandle(sch)
-
             # 检查服务状态
             if status['CurrentState'] == win32service.SERVICE_RUNNING:
                 self.service_status = 1
@@ -164,6 +160,10 @@ class ServiceManager(metaclass=SingletonMeta):
         except Exception as e:
             logger.error(f"Error: {e}")
             return "EXCEPTION"
+        finally:
+            # 关闭服务和服务控制管理器的句柄
+            win32service.CloseServiceHandle(svc)
+            win32service.CloseServiceHandle(sch)
         return self.service_status
 
     def is_service_exist(self):
@@ -176,12 +176,13 @@ class ServiceManager(metaclass=SingletonMeta):
             # 查询服务状态
             status = win32service.QueryServiceStatusEx(svc)
 
-            # 关闭服务和服务控制管理器的句柄
-            win32service.CloseServiceHandle(svc)
-            win32service.CloseServiceHandle(sch)
         except Exception as e:
             logger.error(f"Error: {e}")
             return False
+        finally:
+            # 关闭服务和服务控制管理器的句柄
+            win32service.CloseServiceHandle(svc)
+            win32service.CloseServiceHandle(sch)
         return True
 
     def upsert_service(self, params):
