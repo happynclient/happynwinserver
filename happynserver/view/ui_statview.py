@@ -12,6 +12,7 @@ class UI_StatWindow(QtWidgets.QWidget):
 
         self.scale_font = QFont()
         self.scale_font.setPointSize(int(11 * QApplication.desktop().logicalDpiX() / 96.0))
+        self.setFont(self.scale_font)
 
         self.config_manager = HPYConfigManager()
         manager_port = self.config_manager.extract_manager_port()
@@ -21,7 +22,6 @@ class UI_StatWindow(QtWidgets.QWidget):
         self.clientModel.setDynamicSortFilter(True)
         # default set filter all key columns
         self.clientModel.setFilterKeyColumn(-1)
-        self.clientModel.setFont(self.scale_font)
 
         self.serverGroupBox = QtWidgets.QGroupBox("happyn网络设备列表")
         self.clientGroupBox = QtWidgets.QGroupBox("happyn联网设备统计")
