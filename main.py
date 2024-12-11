@@ -225,7 +225,9 @@ if __name__ == "__main__":
             sys.exit()
 
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.ApplicationAttribute.AA_UseHighDpiPixmaps)
     app = QApplication(sys.argv)
+
     mainWindow = HappynetUIMainWindow()
     mainWindow.tray_icon = UITrayIcon(mainWindow)
     mainWindow.show()
