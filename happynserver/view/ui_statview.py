@@ -1,5 +1,7 @@
 import time
 from PySide2 import QtCore, QtWidgets, QtGui
+from PySide2.QtGui import QFont
+from PySide2.QtWidgets import QApplication
 from ..controller.server import HPYServerManager
 from ..model.config import HPYConfigManager
 
@@ -7,6 +9,9 @@ from ..model.config import HPYConfigManager
 class UI_StatWindow(QtWidgets.QWidget):
     def __init__(self):
         super(UI_StatWindow, self).__init__()
+
+        self.scale_font = QFont()
+        self.scale_font.setPointSize(int(11 * QApplication.desktop().logicalDpiX() / 96.0))
 
         self.config_manager = HPYConfigManager()
         manager_port = self.config_manager.extract_manager_port()
@@ -16,6 +21,7 @@ class UI_StatWindow(QtWidgets.QWidget):
         self.clientModel.setDynamicSortFilter(True)
         # default set filter all key columns
         self.clientModel.setFilterKeyColumn(-1)
+        self.clientModel.setFont(self.scale_font)
 
         self.serverGroupBox = QtWidgets.QGroupBox("happyn网络设备列表")
         self.clientGroupBox = QtWidgets.QGroupBox("happyn联网设备统计")
