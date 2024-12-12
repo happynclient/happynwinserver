@@ -85,7 +85,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         return base_path
 
     def toggle_service(self):
-        if self.service_manager.is_service_exist() and self.service_manager.get_service_status():
+        if self.service_manager.is_service_exist() and self.service_manager.get_service_status() == 1:
             self.stop_service()
         else:
             self.start_service()
@@ -154,7 +154,7 @@ class HappynetUIMainWindow(QFrame, Ui_HappynServerWindow):
         while True:
             # 检测服务状态
             if self.service_manager.is_service_exist():
-                if self.service_manager.get_service_status():
+                if self.service_manager.get_service_status() == 1:
                     self.commandLinkButtonStart.setText("停止")
                     self.commandLinkButtonMonitor.setEnabled(True)
                     # 如果服务正在运行，发射信号更新日志窗口

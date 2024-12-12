@@ -119,7 +119,7 @@ class ServiceManager(metaclass=SingletonMeta):
     def delete_service(self):
         if not self.is_service_exist():
             return
-        if self.get_service_status():
+        if self.get_service_status() == 1:
             self.stop_service()
         delete_command = f'"{os.path.join(self.working_dir, "utility", "happynssm.exe")}" remove {self.service_name} confirm'
         logger.info(delete_command)
@@ -142,12 +142,14 @@ class ServiceManager(metaclass=SingletonMeta):
                0 stopped
     """
     def get_service_status(self):
+        svc = None
+        sch = None
         try:
             # 打开服务控制管理器
             sch = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
 
             # 打开指定的服务
-            svc = win32service.OpenService(sch, self.service_name, win32service.SC_MANAGER_ALL_ACCESS)
+            svc = win32service.OpenService(sch, self.service_name, win32service.SERVICE_QUERY_STATUS)
 
             # 查询服务状态
             status = win32service.QueryServiceStatusEx(svc)
@@ -159,31 +161,57 @@ class ServiceManager(metaclass=SingletonMeta):
                 self.service_status = 0
         except Exception as e:
             logger.error(f"Error: {e}")
-            return "EXCEPTION"
+            self.service_status = -1
         finally:
-            # 关闭服务和服务控制管理器的句柄
-            win32service.CloseServiceHandle(svc)
-            win32service.CloseServiceHandle(sch)
+            # 关闭服务和服务控制管理器的句柄，确保句柄有效
+            if svc:
+                try:
+                    win32service.CloseServiceHandle(svc)
+                except Exception as e:
+                    logger.error(f"Failed to close service handle: {e}")
+
+            if sch:
+                try:
+                    win32service.CloseServiceHandle(sch)
+                except Exception as e:
+                    logger.error(f"Failed to close service control manager handle: {e}")
+
         return self.service_status
 
     def is_service_exist(self):
+        is_exist = False
+        svc = None
+        sch = None
         try:
             # 打开服务控制管理器
             sch = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
 
-            # 打开指定的服务
-            svc = win32service.OpenService(sch, self.service_name, win32service.SC_MANAGER_ALL_ACCESS)
+            # 尝试打开指定的服务
+            svc = win32service.OpenService(sch, self.service_name, win32service.SERVICE_QUERY_STATUS)
+
             # 查询服务状态
             status = win32service.QueryServiceStatusEx(svc)
 
+            # 如果没有异常，服务存在
+            is_exist = True
         except Exception as e:
             logger.error(f"Error: {e}")
-            return False
+            is_exist = False
         finally:
-            # 关闭服务和服务控制管理器的句柄
-            win32service.CloseServiceHandle(svc)
-            win32service.CloseServiceHandle(sch)
-        return True
+            # 关闭服务和服务控制管理器的句柄，确保句柄有效
+            if svc:
+                try:
+                    win32service.CloseServiceHandle(svc)
+                except Exception as e:
+                    logger.error(f"Failed to close service handle: {e}")
+
+            if sch:
+                try:
+                    win32service.CloseServiceHandle(sch)
+                except Exception as e:
+                    logger.error(f"Failed to close service control manager handle: {e}")
+
+        return is_exist
 
     def upsert_service(self, params):
         if self.is_service_exist():
@@ -195,13 +223,13 @@ class ServiceManager(metaclass=SingletonMeta):
         if os.path.exists(self.log_file):
             with open(self.log_file, 'rb') as file:
                 raw_data = file.read()
-            detection = chardet.detect(raw_data)
-            encoding = detection['encoding']
-            confidence = detection['confidence']
-            if confidence < 0.9:  # 示例阈值，根据需要调整
-                encoding = 'GBK'  # 或选择另一个可能的编码
-            try:
-                return raw_data.decode(encoding, errors='ignore')
-            except UnicodeDecodeError:
-                return "Failed to decode the log file with detected encoding."
+                detection = chardet.detect(raw_data)
+                encoding = detection['encoding']
+                confidence = detection['confidence']
+                if confidence < 0.9:  # 示例阈值，根据需要调整
+                    encoding = 'GBK'  # 或选择另一个可能的编码
+                try:
+                    return raw_data.decode(encoding, errors='ignore')
+                except UnicodeDecodeError:
+                    return "Failed to decode the log file with detected encoding."
         return "Log file does not exist."
