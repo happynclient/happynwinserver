@@ -221,15 +221,38 @@ class ServiceManager(metaclass=SingletonMeta):
 
     def get_logs(self):
         if os.path.exists(self.log_file):
-            with open(self.log_file, 'rb') as file:
-                raw_data = file.read()
-                detection = chardet.detect(raw_data)
-                encoding = detection['encoding']
-                confidence = detection['confidence']
-                if confidence < 0.9:  # 示例阈值，根据需要调整
-                    encoding = 'GBK'  # 或选择另一个可能的编码
-                try:
-                    return raw_data.decode(encoding, errors='ignore')
-                except UnicodeDecodeError:
-                    return "Failed to decode the log file with detected encoding."
+            try:
+                # 只读取最后1000行
+                with open(self.log_file, 'rb') as file:
+                    # 定位到文件末尾
+                    file.seek(0, os.SEEK_END)
+                    buffer = []
+                    position = file.tell()
+                    lines_to_read = 1000
+
+                    while position >= 0 and lines_to_read > 0:
+                        file.seek(position)
+                        char = file.read(1)
+                        if char == b'\n' and buffer:
+                            lines_to_read -= 1
+                        buffer.append(char)
+                        position -= 1
+
+                    # 反转并连接行
+                    buffer.reverse()
+                    log_data = b''.join(buffer)
+
+                    # 检测编码
+                    detection = chardet.detect(log_data)
+                    encoding = detection['encoding']
+                    confidence = detection['confidence']
+                    if confidence < 0.9:
+                        encoding = 'GBK'  # 或选择另一个可能的编码
+
+                    # 解码日志数据
+                    return log_data.decode(encoding, errors='ignore')
+            except UnicodeDecodeError:
+                return "Failed to decode the log file with detected encoding."
+            except Exception as e:
+                return f"Error reading log file: {e}"
         return "Log file does not exist."
