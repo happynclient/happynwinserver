@@ -12,8 +12,8 @@ OutFile "happynserver_install.exe"
 RequestExecutionLevel admin
 
 BrandingText "HappynServer Installer"
-!define PRODUCT_VERSION "0.2.0.0"
-!define PRODUCT_PUBLISHER "happyn.cn"
+!define PRODUCT_VERSION "0.3.0.0"
+!define PRODUCT_PUBLISHER "happyn.net"
 
 InstallDir "$PROGRAMFILES\happynserver"
 InstallDirRegKey HKLM "Software\happynserver" "Path"
@@ -104,7 +104,32 @@ Section "happynserver"
 ; --------------------------------------------------------
 ; SERVICE
 ; --------------------------------------------------------
+  SetOutPath $INSTDIR
 
+  ClearErrors
+  EnumRegKey $0 HKCU "SOFTWARE\happynet" 0
+  ${If} ${Errors}
+    DetailPrint  "Value not found"
+    WriteRegStr HKCU "SOFTWARE\happynserver\Parameters" "ServerNetConf" "$INSTDIR\etc\happynserver.conf"
+    WriteRegStr HKCU "SOFTWARE\happynserver\Parameters" "CustomParam" "-M"
+    WriteRegDWORD HKCU "SOFTWARE\happynserver\Parameters" "IsMinToTray" 0x00000001
+    WriteRegDWORD HKCU "SOFTWARE\happynserver\Parameters" "IsAutoStart" 0x00000000
+    WriteRegDWORD HKCU "SOFTWARE\happynserver\Parameters" "ServerPort" 0x00001DE6
+  ${Else}
+    ${IF} $0 == ""
+          DetailPrint   "NUL exists and it's empty"
+          WriteRegStr HKCU "SOFTWARE\happynserver\Parameters" "ServerNetConf" "$INSTDIR\etc\happynserver.conf"
+          WriteRegStr HKCU "SOFTWARE\happynserver\Parameters" "CustomParam" "-M"
+          WriteRegDWORD HKCU "SOFTWARE\happynserver\Parameters" "IsMinToTray" 0x00000001
+          WriteRegDWORD HKCU "SOFTWARE\happynserver\Parameters" "IsAutoStart" 0x00000000
+          WriteRegDWORD HKCU "SOFTWARE\happynserver\Parameters" "ServerPort" 0x00001DE6
+      ${ELSE}
+          DetailPrint   "Value isn't empty"
+          ;--------------------------------
+          ;add new option
+
+      ${ENDIF}
+  ${EndIf}
 
 ; --------------------------------------------------------
 ; GUI TOOL
@@ -144,10 +169,11 @@ Section "Uninstall"
   Delete "$INSTDIR\*.*"
   Delete "$SMPROGRAMS\happynserver\*.*"
   Delete "$SMPROGRAMS\happynserver"
+  Delete "$LocalAppData\happynet\HappynServer*"
   Delete "$APPDATA\happynet\HappynServer*"
   RMDir "$INSTDIR"
   DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver"
-  DeleteRegKey HKLM "SOFTWARE\happynserver"
+  DeleteRegKey HKCU "SOFTWARE\happynserver"
   DeleteRegValue HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "happynserver"
   Delete "$DESKTOP\happynserver.lnk"
 
