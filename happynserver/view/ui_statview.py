@@ -102,6 +102,14 @@ class UI_StatWindow(QtWidgets.QWidget):
         self.filterCaseSensitivityCheckBox.setChecked(False)
         self.sortCaseSensitivityCheckBox.setChecked(False)
 
+    def closeEvent(self, event):
+        # 在窗口关闭时停止定时器并释放资源
+        self.updateTimer.stop()
+        self.clientModel.setSourceModel(None)  # 释放模型
+
+        # 调用父类的 closeEvent
+        event.accept()
+
     def updateClientModel(self):
         model = self.updateDeviceStatModel()
         self.clientModel.setSourceModel(model)
