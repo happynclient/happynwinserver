@@ -169,7 +169,6 @@ Section "Uninstall"
   Delete "$INSTDIR\*.*"
   Delete "$SMPROGRAMS\happynserver\*.*"
   Delete "$SMPROGRAMS\happynserver"
-  Delete "$LocalAppData\happynet\HappynServer*"
   Delete "$APPDATA\happynet\HappynServer*"
   RMDir "$INSTDIR"
   DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\happynserver"
@@ -187,4 +186,8 @@ Section "Uninstall"
   ;  DeleteRegValue HKU "$R1\Software\Microsoft\Windows\CurrentVersion\Run" "happynserver"
   ;  Goto EnumStart
   ;EnumEnd:
+
+  SetShellVarContext all
+  Delete "$LocalAppData\happynet\HappynServer*"
+
 SectionEnd
