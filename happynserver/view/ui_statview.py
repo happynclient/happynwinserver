@@ -80,7 +80,6 @@ class UI_StatWindow(QtWidgets.QWidget):
 
         self.updateTimer = QtCore.QTimer()
         self.updateTimer.timeout.connect(self.updateClientModel)
-        self.updateTimer.start(2000)
 
         mainLayout = QtWidgets.QVBoxLayout()
         #mainLayout.addWidget(self.serverGroupBox)
@@ -109,6 +108,12 @@ class UI_StatWindow(QtWidgets.QWidget):
 
         # 调用父类的 closeEvent
         event.accept()
+
+    def showEvent(self, event):
+        # 启动定时器
+        self.updateTimer.start(2000)
+
+        super(UI_StatWindow, self).showEvent(event)  # 调用父类的 showEvent
 
     def updateClientModel(self):
         model = self.updateDeviceStatModel()
